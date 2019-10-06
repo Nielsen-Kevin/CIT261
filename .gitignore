@@ -18,6 +18,10 @@ $RECYCLE.BIN/
 # Windows shortcuts
 *.lnk
 
+#Other
+_notes/*
+dwsync.xml
+
 # =========================
 # Operating System Files
 # =========================
