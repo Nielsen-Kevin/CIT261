@@ -1,0 +1,270 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Hangman: JavaScript</title>
+<style type="text/css">
+* {
+	font-family: Arial, Helvetica, sans-serif;	
+}
+div {
+	margin:0;
+	padding:0;
+}
+#container {
+	margin:20px auto;
+	padding:0;
+	width:380px;
+	background-color: #FFF;
+	height: auto;
+}
+#copyright {
+    clear: both;
+    color: #666;
+    font-size: .7em;
+    padding-top: 5px;
+    text-align: center;
+    text-transform: uppercase;
+}
+#letters, #used {
+	width: ‭380px;
+	min-height: 40px;
+	background-color: #000;
+	border:#000 solid 1px;
+	display: grid;
+	grid-template-columns: repeat(9, 1fr);
+}
+.letter {
+	margin:0;
+	padding:0;
+	height: 40px;
+	width: 40px;
+	display:block;
+	border:#000 solid 1px;
+	text-align:center;
+	line-height: 40px;
+	background-color: #F0F0F0;
+	/* disable selecting text on buttons */
+	user-select: none;
+	-moz-user-select: none;
+	-khtml-user-select: none;
+	-webkit-user-select: none;
+	-o-user-select: none;
+}
+#used .letter {
+    background-color: #AAA;
+	color:#000;
+	font-weight:bold;
+}
+.button {
+	background-color: #fff;
+	color:#000;
+	font-weight:bold;
+	cursor:pointer;
+}
+.button:hover {
+	background-color: #888;
+	color:#fff;
+}
+#messageBlock {
+	width: 380px;
+	height: 50px;
+	position: relative;	
+}
+#message {
+	margin:0;
+	width:380px;
+	color: #F00;
+	font-size: 26px;
+	text-align:center;
+	position: absolute;
+	padding:5px 0;
+}
+#displayWord {
+	margin:30px 0 20px 0;
+	padding:10px 0;
+	width:380px;
+	color: #000;
+	font-size: 34px;
+	letter-spacing:5px;
+	text-align:center;
+	background-color: #f7f7f7;
+}
+</style>
+</head>
+<body onLoad="startHangman(); return true;">
+<div id="container">
+	<h2>Hangman</h2>
+	<p>JavaScript: Loops, Conditional Statements, Functions, Variables, Parameters, Arrays, Associative Arrays, Manipulating CSS Class Properties</p>
+	<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="380px" height="380px" viewBox="0 0 380 380" enable-background="new 0 0 380 380" xml:space="preserve">
+		<g>
+			<polyline fill="none" stroke="#603913" stroke-width="10" stroke-miterlimit="10" points="270.268,26 73,26 73,376"/>
+			<polyline fill="none" stroke="#603913" stroke-width="10" stroke-miterlimit="10" points="5.755,376.152 72.999,259.682,140.242,376.152"/>
+			<line fill="none" stroke="#603913" stroke-width="10" stroke-miterlimit="10" x1="189.471" y1="26" x2="73" y2="93.244"/>
+		</g>
+		<line fill="none" stroke="#603913" stroke-width="10" stroke-miterlimit="10" x1="0" y1="376.333" x2="400" y2="376.333"/>
+		<line fill="none" stroke="#C49A6C" stroke-width="5" stroke-miterlimit="10" x1="240.268" y1="93" x2="240.268" y2="21.667"/>
+		<g>
+			<line id="left_leg" fill="#FFFFFF" stroke="#000000" stroke-width="5" stroke-miterlimit="10" x1="344.752" y1="186.457" x2="253.408" y2="174.985"/>
+			<line id="left_arm" fill="#FFFFFF" stroke="#000000" stroke-width="5" stroke-miterlimit="10" x1="235.977" y1="247.981" x2="326.297" y2="230.166"/>
+			<line id="right_leg" fill="#FFFFFF" stroke="#000000" stroke-width="5" stroke-miterlimit="10" x1="239.712" y1="83.31" x2="252.249" y2="174.513"/>
+			<line id="right_arm" fill="#FFFFFF" stroke="#000000" stroke-width="5" stroke-miterlimit="10" x1="178.692" y1="175.159" x2="235.346" y2="247.726"/>
+			<line id="back" fill="none" stroke="#000000" stroke-width="5" stroke-miterlimit="10" x1="235.254" y1="249.025" x2="252.938" y2="174.646"/>
+			<circle id="head" fill="#FFFFFF" stroke="#000000" stroke-width="5" stroke-miterlimit="10" cx="221.667" cy="282.363" r="36"/>
+		</g>
+	</svg>
+	<div id="messageBlock">
+		<div id="message">&nbsp;</div>
+	</div>
+	<div id="displayWord"></div>
+	<p>Letters Choices:</p>
+	<div id="letters"></div>
+	<p>Letters Used:</p>
+	<div id="used"></div>
+	<p><input type="button" value="Play New Game" onClick="startHangman()" /></p>
+</div>
+<script type="text/javascript">
+function startHangman() {
+	let wordList = ['JAVASCRIPT', 'LOOPS', 'CONDITIONAL STATEMENTS', 'FUNCTIONS', 'VARIABLES', 'PARAMETERS', 'ARRAYS', 'ASSOCIATIVE ARRAYS'];
+	let man = ['right_leg','back','left_leg','right_arm','left_arm','head'];
+	let messages = {
+		'wrong': ['That\'s wrong!', 'Nope, wrong answers!', 'Sorry try again!', 'Nice try but wrong!'],
+		'right': ['Good job','Nice one', 'You got this', 'You make this look easy', 'Great you got one'],
+		'won'  : ['Well done, you won! <p style="font-size: 13px">Stop hanging around lets <a onClick="startHangman()" href="#" >play again</a>?</p>'],
+		'lose' : ['Sorry, you lost! <p style="font-size: 13px">Oh look your still alive! Want to <a onClick="startHangman()" href="#" >play again</a>?</p>']
+	};
+	let txtColor = {
+		'wrong': 'red', 
+		'right': 'green', 
+		'won'  : 'green', 
+		'lost' : 'red',  
+	}
+	let active_game = true;
+	let used_letters = '';
+	let wrong_count = 0;
+	let the_word = '';
+	let display_word = '';
+
+	buildGame();
+
+	function guessLetter(l) {
+		if (active_game == false) {
+			return;
+		}
+		// Make used letter and remove letter button
+		used_letters += '<div class="letter">' + l + '</div>';
+		document.getElementById('used').innerHTML = used_letters;
+		document.getElementById(l).remove();//remove letter
+		// Check game status
+		if (the_word.indexOf(l) != -1) {
+			// Correct letter guessed
+			display_word = revealLetters(l, display_word);
+			document.getElementById('displayWord').innerHTML = display_word;
+			message('right');
+
+			if (display_word.indexOf('_') == -1) {
+				// Won Game
+				message('won');
+				active_game = false;
+			}
+		} else {
+			// Wrong letter guessed
+			wrong_count += 1;
+			document.getElementById(man[wrong_count-1]).style.display = "block";
+			message('wrong');
+			
+			if (wrong_count == 6) {
+				// Lose game
+				message('lose');
+				active_game = false;
+				// Reveal Answer
+				document.getElementById('displayWord').innerHTML = the_word;
+			}
+		}
+	}
+
+	function hideLetters(str) {
+		// Hide every letter
+		hide = '';
+		for (let i = 0; i < str.length; i ++) {
+			hide += '_';
+		}
+		// Unhide spaces
+		hide = revealLetters(' ', hide);
+		return hide;
+	}
+
+	function revealLetters(l, str) {
+		// Search and reveal letters positions
+		pos = 0;
+		while (the_word.indexOf(l, pos) != -1) {
+			pos = the_word.indexOf(l, pos);
+			start_slice = str.substring(0, pos);
+			pos += 1;
+			end_slice = str.substring(pos, str.length);
+			// Rebuild string
+			str = start_slice + l + end_slice;
+		}
+		return str;
+	}
+
+	function message(status) {
+		// Setup messages from array
+		random_number = Math.round(Math.random() * (messages[status].length - 1));	
+		document.getElementById('message').innerHTML = messages[status][random_number];
+		document.getElementById('message').style.color = txtColor[status];
+
+		// Gives the message some life
+		let pos = -20;
+		let id = setInterval(frame, 5);
+		function frame() {
+			if (pos == 0) {
+				clearInterval(id);
+			} else {
+				pos++; 
+				document.getElementById("message").style.top = pos + "px"; 
+			}
+		}
+	}
+
+	function buildGame() {
+		// Reset settings
+		active_game = true;
+		used_letters = '';
+		wrong_count = 0;
+
+		// Pick randomly word
+		the_word = wordList[Math.round(Math.random() * (wordList.length - 1))];
+		// Hide word and display
+		display_word = hideLetters(the_word);
+		document.getElementById('displayWord').innerHTML = display_word;
+
+		// Hit message
+		document.getElementById('message').innerHTML = '<p style="font-size: 13px">Hit: related JavaScript</p>';
+		// Hide Man
+		for(let i = 0; i < man.length; i++) {
+			document.getElementById(man[i]).style.display = "none";
+		}
+		// Clear used letter
+		document.getElementById('used').innerHTML = '';
+
+		// Create letter buttons
+		let alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
+		let buttons = '';
+		for(let i = 0; i < alphabet.length; i++) {
+			buttons += '<div id="' + alphabet[i] + '" class="button letter">' + alphabet[i] + '</div>';
+		}
+		document.getElementById('letters').innerHTML = buttons;
+
+		// Create on click listener
+		for(let i = 0; i < alphabet.length; i++) {
+			document.getElementById(alphabet[i]).addEventListener('click',function(event) {
+				guessLetter(event.target.id);
+			});
+		}
+	}
+}
+</script>
+<div id="copyright">Copyright &copy; 2019 Kevin Nielsen - CIT261</div>
+</body>
+</html>

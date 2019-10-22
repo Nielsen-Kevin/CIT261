@@ -2,9 +2,125 @@
 <html>
 <head>
 <meta charset="utf-8">
-<title>Sub01</title>
-</head>
+<title>Sub01: JavaScript</title>
+<link type="text/css" rel=stylesheet href="css/cit261.css">
+<style type="text/css">
 
+</style>
+</head>
 <body>
+<div id="container">
+	<nav><a href="index.html">Home</a></nav>
+	<h1>JavaScript</h1>
+	<p>Loops, Conditional Statements, Functions, Variables, Parameters, Arrays, Associative Arrays</p>
+	<hr>
+	<p><b>Assignment Notes:</b> these are examples of code chunks used in my first fluency evidence assignment. 
+	Code taken from working application. Showing the use of these essential JavaScript fundamentals.</p>
+	<p><b>Application:</b> <a href="hangman.html" title="Hangman">Hangman</a></p>
+	<h3>While Loop</h3>
+	<code>while (the_word.indexOf(l, pos) != -1) {
+	pos = the_word.indexOf(l, pos);
+	start_slice = str.substring(0, pos);
+	pos += 1;
+	end_slice = str.substring(pos, str.length);
+	<span class="comment">// Rebuild string</span>
+	str = start_slice + l + end_slice;
+}</code>
+<h3>For Loop</h3>
+<code>let alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
+let letters = '';
+for(let i = 0; i < alphabet.length; i++) {
+	letters += alphabet[i];
+}</code>
+	<h3>If Conditional Statements</h3>
+	<p></p>
+	<code>if (active_game == false) {
+	return;
+}</code>
+	<h3>If/Else Conditional Statements</h3>
+	<code><span class="comment">// Check game status</span>
+if (the_word.indexOf(l) != -1) {
+	<span class="comment">// Correct letter guessed</span>
+
+	if (display_word.indexOf('_') == -1) {
+		<span class="comment">// Won Game</span>
+	}
+} else {
+	<span class="comment">// Wrong letter guessed</span>
+	
+	if (wrong_count == 6) {
+		<span class="comment">// Lose game</span>
+	}
+}</code>
+	<h3>Functions</h3>
+	<code>function buildGame() {
+	<span class="comment">// Reset settings</span>
+	active_game = true;
+	used_letters = '';
+	wrong_count = 0;
+
+	<span class="comment">// Pick randomly word</span>
+	the_word = wordList[Math.round(Math.random() * (wordList.length - 1))];
+	<span class="comment">// Hide word and display</span>
+	display_word = hideLetters(the_word);
+	document.getElementById('displayWord').innerHTML = display_word;
+
+	<span class="comment">// Do more stuff</span>
+}</code>
+	<h3>Variables</h3>
+	<p></p>
+	<code>let active_game = true;
+let used_letters = '';
+let wrong_count = 0;
+let the_word = 'VARIABLES';
+let display_word = 'V_RI_B__S';</code>
+	<h3>Parameters</h3>
+	<code>function hideLetters(str) {
+	<span class="comment">// Hide every letter</span>
+	hide = '';
+	for (let i = 0; i < str.length; i ++) {
+		hide += '_';
+	}
+	<span class="comment">// Unhide spaces</span>
+	hide = revealLetters(' ', hide);
+	return hide;
+}
+
+function message(status) {
+	<span class="comment">// Setup messages from array</span>
+	random_number = Math.round(Math.random() * (messages[status].length - 1));	
+	document.getElementById('message').innerHTML = messages[status][random_number];
+	document.getElementById('message').style.color = txtColor[status];
+}</code>
+	<h3>Arrays</h3>
+	<code>let wordList = [
+	'JAVASCRIPT', 
+	'LOOPS', 
+	'CONDITIONAL STATEMENTS', 
+	'FUNCTIONS', 'VARIABLES', 
+	'PARAMETERS', 'ARRAYS', 
+	'ASSOCIATIVE ARRAYS'
+];
+
+let man = ['right_leg','back','left_leg','right_arm','left_arm','head'];</code>
+	<h3>Associative Arrays</h3>
+	<code>let messages = {
+	'wrong': ['That\'s wrong!', 'Nope, wrong answers!', 'Sorry try again!', 'Nice try but wrong!'],
+	'right': ['Good job','Nice one', 'You got this', 'You make this look easy', 'Great you got one'],
+	'won'  : ['Well done, you won!'],
+	'lose' : ['Sorry, you lost!']
+};
+
+let txtColor = {
+	'wrong': 'red', 
+	'right': 'green', 
+	'won'  : 'green', 
+	'lost' : 'red',  
+}</code>
+
+<h3>Add in some HTML, CSS, and graphics.</h3>
+<p>You will get something more, see <a href="hangman.html" title="Hangman">Hangman</a>.</p>
+</div>
+<div id="copyright">Copyright &copy; 2019 Kevin Nielsen - CIT261</div>
 </body>
 </html>

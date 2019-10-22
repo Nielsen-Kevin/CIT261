@@ -2,9 +2,262 @@
 <html>
 <head>
 <meta charset="utf-8">
-<title>Sub01</title>
+<title>Sub06: DOM Document Object Model</title>
+<link type="text/css" rel=stylesheet href="css/cit261.css">
+<style type="text/css">
+* {
+	line-height:1.30em;
+}
+</style>
 </head>
-
 <body>
+<div id="container">
+	<nav><a href="index.html">Home</a></nav>
+	<h1>DOM Document Object Model</h1>
+	<p>DOM Manipulation Using createElement, appendChild, insertBefore, removeChild, etc.</p>
+
+	<!--<hr>
+	<p><b>Assignment Notes:</b> .</p>
+	<p><b>Application:</b> <a href="name.html" title="name">name</a></p>
+	<hr>-->
+
+	<h3>Introduction</h3>
+	<p>What is <b>DOM</b>? DOM stands for  <b>Document Object Model</b> (DOM) and is an <b>application programming interface</b> (API) for valid HTML and XML documents.</p>
+	<p>With DOM JavaScript get all the power it needs to  create and modify  HTML dynamically.</p>
+	<p>JavaScript with DOM can:</p>
+	<ul>
+		<li>change all the HTML elements</li>
+		<li>change all the HTML attributes</li>
+		<li>change all the CSS styles</li>
+		<li>remove existing HTML elements and attributes</li>
+		<li>add new HTML elements and attributes</li>
+		<li>react to all existing HTML events</li>
+		<li>create new HTML events	</li>
+	</ul>
+	<p>The <strong>HTML DOM</strong> model is constructed as a tree of <strong>Objects</strong>. See image on <a href="https://www.w3schools.com/js/js_htmldom.asp" target="new">w3schools.com</a></p>
+	<code>document.body.&lt;tag&gt; ...</code>
+	<p>&nbsp;</p>
+	<p>What is <b>BOM</b>? it is Browser Object Model.</p>
+	<p>Even the document object (of the HTML DOM) is a property of the window object:</p>
+	<code>window.document.getElementById("header"); //BOM</code>
+	<p>is the same as:</p>
+	<code>document.getElementById("header"); //DOM</code>
+
+	<h3>Methods &amp; Properties</h3>
+	<p>The one you'll use the most</p>
+	<ul>
+		<li>document.getElementById(id)</li>
+		<li>document.getElementsByTagName(name)</li>
+		<li>document.getElementsByClassName(name)</li>
+		<li>element.innerHTML (get the content)</li>
+		<li>element.innerHTML = 'new html content' (changes the content)</li>
+		<li>element.attribute = new value</li>
+		<li>element.style.property = new style</li>
+		<li>element.setAttribute(attribute, value)</li>
+	</ul>
+	<p>see better break down <a href="https://www.w3schools.com/js/js_htmldom_document.asp" target="new">w3schools.com</a></p>
+
+	<h4>Example a method &amp; property</h4>
+	<button onclick="clickFunction()">Click Me</button>
+	<p id="idHere" class="highlight"></p>
+	<script>
+	function clickFunction() {
+		document.getElementById('idHere').innerHTML = 'Hello World!';
+	}
+	</script>
+	<code>document.getElementById('idHere').innerHTML = 'Hello World!';</code>
+
+	<h4>Example of HTML elements</h4>
+	What is in the <select onchange="whatsIn(this.options[this.selectedIndex].value);">
+    	<option value=""></option>
+    	<option value="title">This pages title</option>
+    	<option value="a.href[0]">First href link on this page</option>
+		<option value="a.href[1]">Second href link on this page</option>
+		<option value="body">Body object</option>
+</select>
+ <p id="whatsIn" class="highlight"></p>
+	<script>
+	function whatsIn(element) {
+		let str;
+		switch(element) {
+			case 'title':
+				str = document.title;
+				break;
+			case 'a.href[0]':
+				str = document.links[0].href;
+				break;
+			case 'a.href[1]':
+				str = document.links[1].href;
+				break;
+			case 'body':
+				str = document.body;
+				break;
+			default:
+				str = '';
+		}
+		document.getElementById('whatsIn').innerHTML = str;
+	}
+	</script>
+	<code>document.getElementById('whatsIn').innerHTML = document.title;
+document.getElementById('whatsIn').innerHTML = document.links[0].href;</code>
+<p></p>
+
+	<h3>appendChild</h3>
+<code>var node = document.createElement("LI");                 <span class="comment">// Create a &lt;li&gt; node</span>
+var textnode = document.createTextNode("Water");         <span class="comment">// Create a text node</span>
+node.<b>appendChild(</b>textnode<b>)</b>;                              <span class="comment">// Append the text to &lt;li&gt;</span>
+document.getElementById("myList").appendChild(node);     <span class="comment">// Append &lt;li&gt; to &lt;ul&gt; with id="myList"</span></code>
+
+	<h3>insertBefore</h3>
+	<code>var newItem = document.createElement("LI");       <span class="comment">// Create a &lt;li&gt; node</span>
+var textnode = document.createTextNode("Water");  <span class="comment">// Create a text node</span>
+newItem.appendChild(textnode);                    <span class="comment">// Append the text to &lt;li&gt;</span>
+
+var list = document.getElementById("myList");     <span class="comment">// Get the &lt;ul&gt; element to insert a new node</span>
+list.<b>insertBefore(</b>newItem, list.childNodes[0]<b>)</b>;   <span class="comment">// Insert &lt;li&gt; before the first child of &lt;ul&gt;&lt;/code&gt;</span>
+// OR (I think is better)
+list.<b>insertBefore(</b>newItem, list.<b>firstChild</b><b>)</b>;</code>
+
+
+	<h3>removeChild</h3>
+	<code>var list = document.getElementById("myList");   <span class="comment">// Get the &lt;ul&gt; element with id="myList"</span>
+list.removeChild(list.childNodes[0]);           <span class="comment">// Remove &lt;ul&gt;'s first child node (index 0)</span></code>
+	
+	<h2>Put all together</h2>
+
+	<p><b>Click on topping to build your pizza.</b> (in future add graphics)<br>
+	<i>Items on left will move to bottom right and items on right will move top left, when clicked. Click X to remove.</i></p>
+
+	
+	<div id="pizzaBox"></div>
+<style>
+	#pizzaBox {
+		position:relative;
+		overflow: auto;
+	}
+	#pizza {
+		float:left;
+		width:50%;
+		border-color:#F00;		
+	}
+	.topping {
+		width:200px;
+		background-color:#CCC;
+		padding: 3px 10px;
+		user-select: none;
+		-moz-user-select: none;
+		-khtml-user-select: none;
+		-webkit-user-select: none;
+		-o-user-select: none;
+	}
+	.topping span {
+		width:20px;
+		height:20px;
+		color:#F00;
+		float:right;
+		background-color:#CCC;
+		text-align:center;
+	}
+	#myPizza {
+		float:right;
+		width:50%;
+		border-color:#00F;
+	}
+</style>
+<script>
+	var toppingsList = ['Red Sausage','BBQ Sausage','Pepperoni','Mushrooms','Bacon','Ham','Cheese','Extra cheese','Black olives','Green peppers','Chicken','Pineapple'];
+
+	var pizzaBox = document.getElementById('pizzaBox');
+
+	let pizza = document.createElement('div');
+	pizza.setAttribute('id', 'pizza');
+	pizzaBox.appendChild(pizza);
+
+	//Create Toppings
+	for(let topping of toppingsList) {
+		//<div id="' + topping + '" class="topping">' + topping + '</div>';
+		let t = document.createElement('div');
+		t.setAttribute('id', topping);
+		t.setAttribute('class', 'topping');
+		t.innerHTML = topping;
+		t.onclick = function() {
+			//Toggle
+			if (this.parentNode.id === "pizza") {
+				myPizza.appendChild(this);
+			} else {
+				//pizza.insertBefore(this, pizza.childNodes[0]);
+				pizza.insertBefore(this, pizza.firstChild);
+			}
+		};
+		//Add remove button
+		let btn = document.createElement('span');
+		btn.setAttribute('class', 'remove');
+		//to use createTextNode you must add it inside you element (appendChild) 
+		let x = document.createTextNode('x');
+			btn.appendChild(x);
+			btn.innerHTML = 'x';
+		btn.onclick = function(event) {
+			event.stopPropagation();//Stop outer div from being clicked too
+			this.parentNode.parentNode.removeChild(this.parentNode);
+			//this.parentElement.remove();// easier
+		};
+		t.appendChild(btn);
+		pizza.appendChild(t);//add to my list of toppings
+	}
+
+	let myPizza = document.createElement('div');
+	myPizza.setAttribute('id', 'myPizza');
+	pizzaBox.appendChild(myPizza);
+</script>
+	<h4>Code</h4>
+	<p><code>&lt;div id="pizzaBox"&gt;&lt;/div&gt;</code><br>
+	<code>var toppingsList = ['Red Sausage','BBQ Sausage','Pepperoni','Mushrooms','Bacon','Ham','Cheese','Extra cheese','Black olives','Green peppers','Chicken','Pineapple'];
+
+var pizzaBox = document.getElementById('pizzaBox');
+
+let pizza = document.createElement('div');
+pizza.setAttribute('id', 'pizza');
+pizzaBox.appendChild(pizza);
+
+<span class="comment">//Create Toppings</span>
+for(let topping of toppingsList) {
+	let t = document.createElement('div');
+	t.setAttribute('id', topping);
+	t.setAttribute('class', 'topping');
+	t.innerHTML = topping;
+	t.onclick = function() {
+		<span class="comment">//Toggle</span>
+		if (this.parentNode.id === "pizza") {
+			myPizza.appendChild(this);
+		} else {
+			<span class="comment">//pizza.insertBefore(this, pizza.childNodes[0]);</span>
+			pizza.insertBefore(this, pizza.firstChild);<span class="comment">// easier</span>
+		}
+	};
+	<span class="comment">//Add remove button</span>
+	let btn = document.createElement('span');
+	btn.setAttribute('class', 'remove');
+	<span class="comment">//to use createTextNode you must add it inside you element (appendChild)</span>
+	let x = document.createTextNode('x');
+		btn.appendChild(x);
+		btn.innerHTML = 'x';
+	btn.onclick = function(event) {
+		event.stopPropagation();<span class="comment">//Stop outer div from being clicked too</span>
+		this.parentNode.parentNode.removeChild(this.parentNode);
+		<span class="comment">//this.parentElement.remove();// easier</span>
+	};
+	t.appendChild(btn);
+	pizza.appendChild(t);<span class="comment">//add to my list of toppings</span>
+}
+
+let myPizza = document.createElement('div');
+myPizza.setAttribute('id', 'myPizza');
+pizzaBox.appendChild(myPizza);</code>
+	</p>
+	<h3>Sources</h3>
+	<p><input type="text" style="width:600px;" value="https://www.w3.org/TR/DOM-Level-2-Core/introduction.html"/></p>
+	<p><input type="text" style="width:600px;" value="https://www.w3schools.com/js/js_window.asp"/></p>
+</div>
+<div id="copyright">Copyright &copy; 2019 Kevin Nielsen - CIT261</div>
 </body>
 </html>

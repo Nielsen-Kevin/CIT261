@@ -1,0 +1,381 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Calendar: JavaScript Objects</title>
+<link type="text/css" rel=stylesheet href="css/cit261.css">
+<style type="text/css">
+#monthTitle {
+	padding: 20px 0;
+	width: 100%;
+	text-align: center;
+	font-size: 20px;
+	font-family: Verdana, sans-serif;
+	text-transform: uppercase;
+	letter-spacing: 2px;
+}
+#monthTitle .prev {
+	float: left;
+	padding-top: 10px;
+	cursor:pointer;
+}
+#monthTitle .next {
+	float: right;
+	padding-top: 10px;
+	cursor:pointer;
+}
+#calendar .grid {
+	display: grid;
+	grid-template-columns: repeat(7, 1fr);
+	background-color: #fefefe;
+	border:#000 solid 1px;
+}
+.weekday {
+  margin: 0;
+  padding: 10px 0;
+  background-color:#ddd;
+  color: #000;
+  text-align: center;
+  font-size:12px;
+  font-family: Verdana, sans-serif;
+}
+.day {
+	position:relative;
+	padding: 20px 5px 10px 5px;
+	background: #eee;
+	margin: 1px;
+	display:inline-block;
+	
+	text-align: left;
+	font-size:12px;
+	color: #777;
+	height: 100px;
+	overflow:hidden;
+	cursor:pointer;
+}
+.day:hover {
+	background-color: #ddd;
+	color:#fff;
+}
+.day label {
+	position:absolute;
+	top: 3px;
+	right: 3px;
+	text-align:right;
+	color: #000;
+	font-family: Verdana, sans-serif;
+	/* disable selecting text on buttons */
+	user-select: none;
+	-moz-user-select: none;
+	-khtml-user-select: none;
+	-webkit-user-select: none;
+	-o-user-select: none;
+}
+.offset {
+	background:none;	
+}
+.offset:hover {
+	background:none;
+}
+.today {
+	font-weight:bold;
+	font-weight:bold;
+	color: #777;
+	background: #FF9;
+}
+.holiday {
+	background-color:#0CF;
+	color: #FFF;
+	padding: 1px 5px;
+	font-family: Verdana, sans-serif;
+	font-weight:normal;
+}
+.event {
+	background-color: #FF6;
+	color: #000;
+	padding: 1px 5px;
+	font-family: Verdana, sans-serif;
+	font-weight:normal;
+}
+.event:hover {
+	background-color: #FFC;
+	color:#000;
+}
+</style>
+</head>
+<body onLoad="startCalendar(); return true;">
+
+<div id="container">
+	<h1>Calendar</h1>
+	<p>JavaScript Objects: Object Creation Functions, Inheritance, Properties, Methods, Instantiation</p>
+	<div id="calendar"></div>
+	<div id="info"></div>
+</div>
+
+<script type="text/javascript">
+
+function startCalendar() {
+	var monthNames = ["January", "February", "March", "April", "May", "June","July", "August", "September", "October", "November", "December"];
+	var daysInWeek = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+
+	var mainContainer = document.getElementById('calendar');
+
+	var today = new Date();
+	//What calendar month to use
+	if(window.location.hash) {
+		arr = String(window.location.hash).substr(1).split('_',2);
+		var d = new Date(arr[0], arr[1]-1, 1);//first day of the month
+	} else {
+		var d = new Date(today.getFullYear(), today.getMonth(), 1);//first day of the month
+	}
+
+	var numYear = d.getFullYear();//4 digits
+	var numMonthKey = d.getMonth();//month (from 0 to 11)
+	var numMonth = d.getMonth() + 1;//month true number
+	var txtMonth = monthNames[d.getMonth()];
+	
+	var totalDays = new Date(d.getFullYear(), d.getMonth() + 1, 0).getDate();
+	var firstWeekDay = d.getDay();//day of week, from 0 (Sunday) to 6 (Saturday)
+
+	var CalendarDate = {}
+	var calendar = {};
+	var schedule = {}
+	var eventCount = 0;
+
+	function buildCalendarArray(year, month) {
+	
+		CalendarDate = {
+			key: '',
+			day: '',
+			month: month,
+			year: year,
+			weekDay: '',
+			holiday: '',
+			today: false,
+			// Methods
+			display: function() {
+				return this.month + '/' + this.day + '/' + this.year;
+			},
+			button: function() {
+				console.log(calendar[this.key].display());
+			},
+			createDayPlaceIn: function(obj) {
+				let thisDay = document.createElement('div');
+				thisDay.setAttribute('id', this.key);
+				thisDay.setAttribute('class', 'day');
+				//Is it today
+				if(calendar[this.key].year == today.getFullYear() && calendar[this.key].month == today.getMonth()+1 && calendar[this.key].day == today.getDate()) {
+					thisDay.classList.add('today');
+				}
+				// Create on click
+				thisDay.onclick = function() {
+					calendar[this.id].button();
+				};
+				obj.appendChild(thisDay);
+				//Add Label
+				let dayLabel = document.createElement('label');
+				dayLabel.innerHTML = calendar[this.key].day;
+				thisDay.appendChild(dayLabel);
+			}
+		}
+	
+		for(let day = 1; day <= totalDays; day++) {
+			obj = new Date(year, month - 1, day);
+			dateKey = obj.getFullYear() + '_' + month + '_' + obj.getDate();
+			// Object Creation Functions
+			calendar[dateKey] = Object.create(CalendarDate);
+			calendar[dateKey].key = dateKey;
+			calendar[dateKey].day = day;
+			calendar[dateKey].weekDay = daysInWeek[obj.getDay()];
+		}
+	}
+
+	// Instantiation with Inheritance Properties and Methods
+	var DateObject = function(type, name, day, month, year) {
+		this.type = type;
+		this.name = name;
+		this.day = day;
+		this.month = month;
+		this.year = year;
+		// Methods
+		this.id = function() {
+			return this.year + '_' + this.month + '_' + this.day;
+		}
+		this.updateDay = function() {
+			if(this.month == numMonth) {
+				//document.getElementById(this.id()).insertAdjacentHTML('beforeend', '<div class="' + this.type + '">' + this.name + '</div>');
+				let goWhere = document.getElementById(this.id())
+				let dateObject = document.createElement('div'); 
+				dateObject.innerHTML = this.name;
+				dateObject.setAttribute('id', 'e' + eventCount);
+				dateObject.classList.add(this.type);
+				goWhere.appendChild(dateObject);
+				
+				// Create on click
+				if(this.type == 'event') {
+					dateObject.onclick = function(event) {
+						event.stopPropagation();//Stop day div from being clicked too
+						//alert(event.target.id);
+						let eventObject = document.createElement('div'); 
+						eventObject.innerHTML = type + '<br>' + 
+							name + '<br>' + 
+							day + '<br>' + 
+							month + '<br>' + 
+							year + '<br>';
+						eventObject.classList.add('message');
+						mainContainer.appendChild(eventObject);
+					};
+				}
+			}
+		}
+	}
+
+	var NewEvent = function(name, month, day, year) {
+		let key = 'e' + eventCount;
+		schedule[key] = new DateObject('event', name, day, month, year);
+		eventCount++;
+	}
+
+	var NewHoliday = function(name, month, day) {
+		let key = 'e' + eventCount;
+		schedule[key] = new DateObject('holiday', name, day, month, numYear);
+		eventCount++;
+	}
+
+	buildCalendarArray(numYear,numMonth);
+
+	//Create Month Title
+	let monthHeading = document.createElement('div');
+	monthHeading.setAttribute('id', 'monthTitle');
+	monthHeading.innerHTML = txtMonth + ' ' + numYear;
+	//mainContainer.insertBefore(monthHeading, mainContainer.childNodes[0]);
+	mainContainer.appendChild(monthHeading);
+
+	// Allow for Link for forward and backwards on Months
+	function prev() {
+		let setPrev = new Date(numYear, numMonthKey - 1, 1);
+		window.location.hash = setPrev.getFullYear() + '_' + (setPrev.getMonth() + 1);
+		mainContainer.innerHTML = '';
+		startCalendar();
+	}
+
+	function next() {
+		let setNext = new Date(numYear, numMonthKey + 1, 1);
+		window.location.hash = setNext.getFullYear() + '_' + (setNext.getMonth() + 1);
+		mainContainer.innerHTML = '';
+		startCalendar();
+	}
+
+	//Create Prev Button
+	let btnPrev = document.createElement("span"); 
+	btnPrev.addEventListener('click',function(event) {
+		prev();
+	});
+	btnPrev.innerHTML = '<';
+	btnPrev.classList.add('prev');
+	monthHeading.insertBefore(btnPrev, monthHeading.childNodes[0]);
+
+	//Create Next Button
+	let btnNext = document.createElement("span"); 
+	btnNext.addEventListener('click',function(event) {
+		next();
+	});
+	btnNext.innerHTML = '>';
+	btnNext.classList.add('next');
+	monthHeading.appendChild(btnNext);
+
+	//Create calendar grid of days
+	//output += '<div class="grid">';
+	let grid = document.createElement('div');
+	grid.setAttribute('class', 'grid');
+	mainContainer.appendChild(grid);
+
+	//Create Days of week
+	for(let wday of daysInWeek) {
+		//output += '<div id="' + wday + '" class="weekday">' + wday + '</div>';
+		let weekDay = document.createElement('div');
+		weekDay.setAttribute('id', wday);
+		weekDay.setAttribute('class', 'weekday');
+		weekDay.innerHTML = wday;
+		grid.appendChild(weekDay);
+	}
+
+	//Build off set - placeholders to help set starting day on corret day of the week
+	for (i=1; i<=firstWeekDay; i++) {
+		//output += '<div class="offset"></div>';
+		let offset = document.createElement('div');
+		offset.setAttribute('class', 'offset');
+		grid.appendChild(offset);
+	}
+
+	//Build Calendar's days
+	//for(let key = 1; key <= Object.keys(calendar).length; key++) {
+	for(let key in calendar) {
+		calendar[key].createDayPlaceIn(grid);
+	}
+
+	let holidays = {
+		1: {'name' : 'New Year\'s Day', 'month': 1, 'day': 1},
+		2: {'name' : 'Martin Luther King Jr. Day', 'month' : 1, 'day' : 21},
+		3: {'name' : 'Valentine\'s Day', 'month' : 2, 'day' : 14},
+		4: {'name' : 'Presidents\' Day', 'month' : 2, 'day' : 18},
+		5: {'name' : 'St. Patrick\'s Day', 'month' : 3, 'day' : 17},
+		6: {'name' : 'Tax Day', 'month' : 4, 'day' : 15},
+		7: {'name' : 'Easter Sunday', 'month' : 4, 'day' : 21},
+		8: {'name' : 'Easter Monday', 'month' : 4, 'day' : 22},
+		9: {'name' : 'Cinco de Mayo', 'month' : 5, 'day' : 5},
+		10: {'name' : 'Mother\'s Day', 'month' : 5, 'day' : 12},
+		11: {'name' : 'Memorial Day', 'month' : 5, 'day' : 27},
+		12: {'name' : 'Father\'s Day', 'month' : 6, 'day' : 16},
+		13: {'name' : 'Independence Day', 'month' : 7, 'day' : 4},
+		14: {'name' : 'Labor Day', 'month' : 9, 'day' : 2},
+		15: {'name' : 'Columbus Day', 'month' : 10, 'day' : 14},
+		16: {'name' : 'Halloween', 'month' : 10, 'day' : 31},
+		17: {'name' : 'Veterans Day', 'month' : 11, 'day' : 11},
+		18: {'name' : 'Thanksgiving Day', 'month' : 11, 'day' : 28},
+		19: {'name' : 'Black Friday', 'month' : 11, 'day' : 29},
+		20: {'name' : 'Christmas Eve', 'month' : 12, 'day' : 24},
+		21: {'name' : 'Christmas Day', 'month' : 12, 'day' : 25},
+		22: {'name' : 'New Year\'s Eve', 'month' : 12, 'day' : 31}
+	};
+
+	for(let key in holidays) {
+		NewHoliday(holidays[key].name, holidays[key].month, holidays[key].day);
+	}
+
+	let events = {
+		1: {'name' : 'Week 1', 'month': 9, 'day': 15},
+		2: {'name' : 'Week 2', 'month' : 9, 'day' : 22},
+		3: {'name' : 'Week 3', 'month' : 9, 'day' : 29},
+		4: {'name' : 'Week 4', 'month' : 10, 'day' : 6},
+		5: {'name' : 'Week 5', 'month' : 10, 'day' : 13},
+		6: {'name' : 'Week 6', 'month' : 10, 'day' : 20},
+		7: {'name' : 'Week 7', 'month' : 10, 'day' : 27},
+		8: {'name' : 'Week 8', 'month' : 11, 'day' : 3},
+		9: {'name' : 'Week 9', 'month' : 11, 'day' : 10},
+		10: {'name' : 'Week 10', 'month' : 11, 'day' : 17},
+		11: {'name' : 'Week 11', 'month' : 11, 'day' : 24},
+		12: {'name' : 'Week 12', 'month' : 12, 'day' : 1},
+		13: {'name' : 'Week 13', 'month' : 12, 'day' : 8},
+		14: {'name' : 'Week 14', 'month' : 12, 'day' : 15},
+	};
+	for(let key in events) {
+		NewEvent(events[key].name, events[key].month, events[key].day, 2019);
+	}
+
+	NewEvent('Group Meeting at 9:00 MT', 10, 9, 2019);
+	NewEvent('Group Meeting at 9:00 MT', 10, 16, 2019);
+	NewEvent('Group Meeting at 9:00 MT', 10, 23, 2019);
+	NewEvent('Group Meeting at 9:00 MT', 10, 30, 2019);
+	
+	//Build schedule of events and holidays
+	for(let key in schedule) {
+		schedule[key].updateDay();
+	}
+	console.table(schedule);
+}//end app
+
+</script>
+<div id="copyright">Copyright &copy; 2019 Kevin Nielsen - CIT261</div>	
+</body>
+</html>
