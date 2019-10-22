@@ -14,16 +14,44 @@
 	<h1>CSS3 using JavaScript</h1>
 	<p>Manipulating CSS Class Properties Using JavaScript</p>
 
-<!--
 	<hr>
-	<p><b>Assignment Notes:</b> .</p>
-	<p><b>Application:</b> <a href="name.html" title="name">name</a></p>
+	<p><b>Assignment Notes:</b> these are code chunks examples used in my hangman game. Code taken from working application. Showing the use of css properties changes with JavaScript.</p>
+	<p><b>Application:</b> <a href="hangman.html" title="Hangman">Hangman</a></p>
 	
-	<h3>SumTopic</h3>
-	<code>
-	</code>
--->
+	<h3>Style display</h3>
+	<p><i>In the hangeman app the stick figure is made of embedded SVG tags so I can interactwith it like HTML. The tags are forced hidden and as you play, the tag are reveals one by one creating the hanging stick figure.</i></p>
+	<code><span class="comment">// Hide Man</span>
+for(let i = 0; i < man.length; i++) {
+	document.getElementById(man[i]).<b>style.display</b> = "none";
+}
+...	
 
+<span class="comment">// Wrong letter guessed</span>
+wrong_count += 1;
+document.getElementById(man[wrong_count-1]).<b>style.display</b> = "block";</code>
+
+	<h3>Style color, Style top</h3>
+	<p><i>The message in the game changes color basE on if your guess is wrong or right. The message also looked to static so I made it move to give it some life.</i></p>
+	<code>function message(status) {
+	<span class="comment">// Setup messages from array</span>
+	random_number = Math.round(Math.random() * (messages[status].length - 1));	
+	document.getElementById('message').innerHTML = messages[status][random_number];
+	document.getElementById('message').<b>style.color</b> = txtColor[status];
+
+	<span class="comment">// Gives the message some life</span>
+	let pos = -20;
+	let id = setInterval(frame, 5);
+	function frame() {
+		if (pos == 0) {
+			clearInterval(id);
+		} else {
+			pos++; 
+			document.getElementById("message").<b>style.top</b> = pos + "px"; 
+		}
+	}
+}</code>
+
+<p><i>No stick figure were harmed in the making of this game.</i></p>
 
 </div>
 <div id="copyright">Copyright &copy; 2019 Kevin Nielsen - CIT261</div>

@@ -40,7 +40,7 @@ code .comment {
 	color:#afafaf;
 	font-family: monospace;
 }
-nav {
+nav, .status {
 	float:right;
 	clear: both;
 	color: #666;
