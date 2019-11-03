@@ -21,6 +21,7 @@ $RECYCLE.BIN/
 #Other
 _notes/*
 dwsync.xml
+_compareTemp/*
 
 # =========================
 # Operating System Files

@@ -293,35 +293,6 @@ function startCalendar() {
 		calendar[key].createDayPlaceIn(grid);
 	}
 
-	let holidays = {
-		1: {'name' : 'New Year\'s Day', 'month': 1, 'day': 1},
-		2: {'name' : 'Martin Luther King Jr. Day', 'month' : 1, 'day' : 21},
-		3: {'name' : 'Valentine\'s Day', 'month' : 2, 'day' : 14},
-		4: {'name' : 'Presidents\' Day', 'month' : 2, 'day' : 18},
-		5: {'name' : 'St. Patrick\'s Day', 'month' : 3, 'day' : 17},
-		6: {'name' : 'Tax Day', 'month' : 4, 'day' : 15},
-		7: {'name' : 'Easter Sunday', 'month' : 4, 'day' : 21},
-		8: {'name' : 'Easter Monday', 'month' : 4, 'day' : 22},
-		9: {'name' : 'Cinco de Mayo', 'month' : 5, 'day' : 5},
-		10: {'name' : 'Mother\'s Day', 'month' : 5, 'day' : 12},
-		11: {'name' : 'Memorial Day', 'month' : 5, 'day' : 27},
-		12: {'name' : 'Father\'s Day', 'month' : 6, 'day' : 16},
-		13: {'name' : 'Independence Day', 'month' : 7, 'day' : 4},
-		14: {'name' : 'Labor Day', 'month' : 9, 'day' : 2},
-		15: {'name' : 'Columbus Day', 'month' : 10, 'day' : 14},
-		16: {'name' : 'Halloween', 'month' : 10, 'day' : 31},
-		17: {'name' : 'Veterans Day', 'month' : 11, 'day' : 11},
-		18: {'name' : 'Thanksgiving Day', 'month' : 11, 'day' : 28},
-		19: {'name' : 'Black Friday', 'month' : 11, 'day' : 29},
-		20: {'name' : 'Christmas Eve', 'month' : 12, 'day' : 24},
-		21: {'name' : 'Christmas Day', 'month' : 12, 'day' : 25},
-		22: {'name' : 'New Year\'s Eve', 'month' : 12, 'day' : 31}
-	};
-
-	for(let key in holidays) {
-		NewHoliday(holidays[key].name, holidays[key].month, holidays[key].day);
-	}
-
 	let events = {
 		1: {'name' : 'Week 1', 'month': 9, 'day': 15},
 		2: {'name' : 'Week 2', 'month' : 9, 'day' : 22},
@@ -352,6 +323,21 @@ function startCalendar() {
 	for(let key in schedule) {
 		schedule[key].updateDay();
 	}
+
+	//Request Holidays from API
+	var xmlhttp = new XMLHttpRequest();
+	xmlhttp.onreadystatechange = function() {
+		if (this.readyState == 4 && this.status == 200) {
+			let holidays = JSON.parse(this.responseText);
+			for(let key in holidays) {
+				let id = NewHoliday(holidays[key].name, parseInt(holidays[key].month, 10), parseInt(holidays[key].day, 10));
+				schedule[id].updateDay();
+			}			
+		}
+	};
+	xmlhttp.open('GET', 'http://forgeofatlas.com/cit261/holidayAPI.php?y=' + numYear + '&m=' + numMonth, true);
+	xmlhttp.send();
+
 	//console.table(schedule);
 }//end app
 
