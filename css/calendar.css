@@ -1,25 +1,45 @@
 /* CSS Document */
-#monthTitle {
-	padding: 20px 0;
+#container {
+	margin-top: 0;
+}
+#monthHeader {
 	width: 100%;
 	text-align: center;
-	font-size: 20px;
+	position:relative;
+	display:table;
+}
+#monthHeader h2 {
+	padding: 20px 0;
+	font-size: 24px;
 	font-family: Verdana, sans-serif;
+	font-weight:bold;
 	text-transform: uppercase;
 	letter-spacing: 2px;
+	display:table-cell;
+	vertical-align:middle;
+	border:none;
 }
-#monthTitle .prev {
-	float: left;
-	padding-top: 10px;
-	cursor:pointer;
+#monthHeader .prev, #monthHeader .next {
+	cursor: pointer;
+	font-size: 40px;
+	font-family: Consolas, monaco, monospace;
+	display:table-cell;
+	vertical-align:middle;
+	line-height: 40px;
+	width: 40px;
 }
-#monthTitle .next {
-	float: right;
-	padding-top: 10px;
-	cursor:pointer;
+#monthHeader .prev {
+	left: 0;
+}
+#monthHeader .next {
+	right: 0;
+}
+#monthHeader .prev:hover, #monthHeader .next:hover {
+	color: #0CF;
 }
 #calendar .grid {
 	display: grid;
+	margin-bottom: 20px;
 	grid-template-columns: repeat(7, 1fr);
 	background-color: #fefefe;
 	border:#000 solid 1px;
@@ -35,11 +55,10 @@
 }
 .day {
 	position:relative;
-	padding: 20px 5px 10px 5px;
+	padding: 20px 0 10px 0;
 	background: #eee;
 	margin: 1px;
 	display:inline-block;
-	
 	text-align: left;
 	font-size:12px;
 	color: #777;
@@ -83,6 +102,7 @@
 	padding: 1px 5px;
 	font-family: Verdana, sans-serif;
 	font-weight:normal;
+	margin-bottom: 2px;
 }
 .event {
 	background-color: #FF6;
@@ -90,12 +110,12 @@
 	padding: 1px 5px;
 	font-family: Verdana, sans-serif;
 	font-weight:normal;
+	margin-bottom: 2px;
 }
 .event:hover {
 	background-color: #FFC;
 	color:#000;
 }
-
 #modal:empty {
 	display:none;
 }
@@ -119,10 +139,14 @@
 	border: 1px solid #888;
 	background-color: #fefefe;
 }
+.modal-content label {
+	width: 50px;
+	display: inline-block;
+}
 #modal .close {
 	position: absolute;
-    right: 15px;
-    top: 5px;
+	right: 15px;
+	top: 5px;
 	color: #aaa;
 	font-size: 30px;
 	font-weight: bold;
@@ -131,4 +155,15 @@
 #modal .close:focus {
 	color: #000;
 	cursor: pointer;
+}
+input, button {
+	padding: 5px;
+}
+@media screen and (max-width: 600px) {
+	#container { 
+		width: 100%;
+	}
+	.modal-content {
+		width: 80%;
+	}	
 }

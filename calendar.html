@@ -3,54 +3,57 @@
 <head>
 <meta charset="utf-8">
 <title>Calendar: JavaScript Objects</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0" />
 <link type="text/css" rel=stylesheet href="css/cit261.css">
 <link type="text/css" rel=stylesheet href="css/calendar.css">
-<style type="text/css">
-
-</style>
 </head>
 <body onLoad="startCalendar(); return true;">
 
 <div id="container">
-	<h1>Calendar</h1>
-	<p>JavaScript Objects: Object Creation Functions, Inheritance, Properties, Methods, Instantiation</p>
 	<div id="calendar"></div>
 	<div id="info"></div>
 </div>
 
 <script type="text/javascript">
-
+/* Todo List
+	+ Save data automatically when updated or added - saveEventsToLocalStorage() problem is events saved to others months with overwrite localStorage of that month
+		- possible Fix: check corrent month with month to save to, if different load localStorage for month to save to then save all
+	+ Toggle Days of week abbreviation for mobile
+	+ When days chicked display all events in model use data-id to link them and make clickable.
+	+ Custom color groups for events
+*/
 function startCalendar() {
-	const monthNames = ["January", "February", "March", "April", "May", "June","July", "August", "September", "October", "November", "December"];
+	const monthNames = ['January', 'February', 'March', 'April', 'May', 'June','July', 'August', 'September', 'October', 'November', 'December'];
 	const daysInWeek = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 
-	var mainContainer = document.getElementById('calendar');
+	// Master Objects
+	var mContainer = document.getElementById('calendar');
+	var mSchedule = {}
+	var mHolidays = {}
 
 	var today = new Date();
-	//What calendar month to use
+	// What calendar month to use
 	if(window.location.hash) {
 		arr = String(window.location.hash).substr(1).split('_',2);
-		var d = new Date(arr[0], arr[1]-1, 1);//first day of the month
+		var d = new Date(arr[0], arr[1]-1, 1);// first day of the month
 	} else {
-		var d = new Date(today.getFullYear(), today.getMonth(), 1);//first day of the month
+		var d = new Date(today.getFullYear(), today.getMonth(), 1);// first day of the month
 	}
 
-	var numYear = d.getFullYear();//4 digits
-	var numMonthKey = d.getMonth();//month (from 0 to 11)
-	var numMonth = d.getMonth() + 1;//month true number
+	var numYear = d.getFullYear();// 4 digits
+	var numMonthKey = d.getMonth();// month (from 0 to 11)
+	var numMonth = d.getMonth() + 1;// month true number
 	var txtMonth = monthNames[d.getMonth()];
 	
 	var totalDays = new Date(d.getFullYear(), d.getMonth() + 1, 0).getDate();
-	var firstWeekDay = d.getDay();//day of week, from 0 (Sunday) to 6 (Saturday)
+	var firstWeekDay = d.getDay();// day of week, from 0 (Sunday) to 6 (Saturday)
 
-	var CalendarDate = {}
 	var calendar = {};
-	var schedule = {}
 	var eventCount = 0;
 
 	function buildCalendarArray(year, month) {
 	
-		CalendarDate = {
+		var CalendarDate = {
 			key: '',
 			day: '',
 			month: month,
@@ -59,9 +62,6 @@ function startCalendar() {
 			holiday: '',
 			today: false,
 			// Methods
-			display: function() {
-				return this.month + '/' + this.day + '/' + this.year;
-			},
 			button: function() {
 				addEvent(this.year + '-' + ('0' + this.month).slice(-2) + '-' + ('0' + this.day).slice(-2));
 			},
@@ -69,7 +69,7 @@ function startCalendar() {
 				let thisDay = document.createElement('div');
 				thisDay.setAttribute('id', this.key);
 				thisDay.setAttribute('class', 'day');
-				//Is it today
+				// Is it today
 				if(calendar[this.key].year == today.getFullYear() && calendar[this.key].month == today.getMonth()+1 && calendar[this.key].day == today.getDate()) {
 					thisDay.classList.add('today');
 					this.today = true;
@@ -79,13 +79,13 @@ function startCalendar() {
 					calendar[this.id].button();
 				};
 				obj.appendChild(thisDay);
-				//Add Label
+				// Add Label
 				let dayLabel = document.createElement('label');
 				dayLabel.innerHTML = calendar[this.key].day;
 				thisDay.appendChild(dayLabel);
 			}
 		}
-	
+
 		for(let day = 1; day <= totalDays; day++) {
 			obj = new Date(year, month - 1, day);
 			dateKey = obj.getFullYear() + '_' + ('0' + month).slice(-2) + '_' + ('0' + obj.getDate()).slice(-2);
@@ -121,7 +121,7 @@ function startCalendar() {
 				// Create on click
 				if(this.type == 'event') {
 					dateObject.onclick = function(event) {
-						event.stopPropagation();//Stop day div from being clicked too
+						event.stopPropagation();// Stop day div from being clicked too
 						
 						editEvent(key, name, year + '-' + ('0' + month).slice(-2) + '-' + ('0' + day).slice(-2));
 					};
@@ -132,52 +132,50 @@ function startCalendar() {
 
 	var NewEvent = function(name, month, day, year) {
 		let key = 'e' + eventCount;
-		schedule[key] = new DateObject(key, 'event', name, day, month, year);
+		mSchedule[key] = new DateObject(key, 'event', name, day, month, year);
 		eventCount++;
 		return key;
 	}
 
 	var NewHoliday = function(name, month, day) {
-		let key = 'e' + eventCount;
-		schedule[key] = new DateObject(key, 'holiday', name, day, month, numYear);
+		let key = 'h' + eventCount;
+		mHolidays[key] = new DateObject(key, 'holiday', name, day, month, numYear);
 		eventCount++;
 		return key;
 	}
 	
 	var UpdateEvent = function(key, name, month, day, year) {
-		schedule[key] = new DateObject(key, 'event', name, day, month, year);
+		mSchedule[key] = new DateObject(key, 'event', name, day, month, year);
 		obj = document.getElementById(key);
 		obj.parentNode.removeChild(obj);
 	}
 
-	//My Modal
+	// My Modal
 	function createModal() {
-		//Create model
+		// Create model
 		var modal = document.createElement('div');
 		modal.setAttribute('id', 'modal');
-	
+
 		html = '<div class="modal-content">';
 		html += '	<span class="close">&times;</span>';
-		html += '	<p>';
-		html += '		<input type="hidden" name="id" value=""><br>';
-		html += '		<label for="event">Event</label> <input type="text" name="event"><br>';
-		html += '		<label for="date">Date</label> <input type="date" name="date"><br>';
-		html += '		<input type="button" name="save" value="save">';
-		html += '	</p>';
+		html += '	<input type="hidden" name="id" value="">';
+		html += '	<p><label for="event">Event</label> <input type="text" name="event"></p>';
+		html += '	<p><label for="date">Date</label> <input type="date" name="date"></p>';
+		html += '	<p><input type="button" name="save" value="Save"></p>';
 		html += '</div>';
-	
+
 		modal.innerHTML = html;
 		document.body.appendChild(modal);
-	
+
 		// click on x close the modal
-		document.getElementsByClassName("close")[0].onclick = function() {
-			modal.style.display = "none";
+		document.getElementsByClassName('close')[0].onclick = function() {
+			modal.style.display = 'none';
 			modal.remove();
 		}
 		// click anywhere outside of the modal close it
 		window.onclick = function(event) {
 			if (event.target == modal) {
-				modal.style.display = "none";
+				modal.style.display = 'none';
 				modal.remove();
 			}
 		}
@@ -192,14 +190,13 @@ function startCalendar() {
 		document.getElementsByName('date')[0].value = date;
 		// Save button
 		document.getElementsByName('save')[0].onclick = function(){
-			//Save data
+			//Get input data
 			let id = document.getElementsByName('id')[0].value;
 			let nEvent = document.getElementsByName('event')[0].value;
 			let nDate = document.getElementsByName('date')[0].value.split('-');
-
+			//Save data
 			UpdateEvent(id, nEvent, nDate[1], nDate[2], nDate[0]);
-			schedule[id].updateDay();
-
+			mSchedule[id].updateDay();
 			modal.remove();
 		};
 	}
@@ -209,45 +206,43 @@ function startCalendar() {
 		createModal();
 		// Update Field
 		document.getElementsByName('date')[0].value = date;
-
 		// Save button
 		document.getElementsByName('save')[0].onclick = function(){
-			//Save data
+			// Get input data
 			let nEvent = document.getElementsByName('event')[0].value;
 			let nDate = document.getElementsByName('date')[0].value.split('-');
-
+			// Save data
 			let key = NewEvent(nEvent, nDate[1], nDate[2], nDate[0]);
-			schedule[key].updateDay();
-	
+			mSchedule[key].updateDay();
 			modal.remove();
 		}
 	}
 
 	buildCalendarArray(numYear,numMonth);
 
-	//Create Month Title
+	// Create Month Title
 	let monthHeading = document.createElement('div');
-	monthHeading.setAttribute('id', 'monthTitle');
-	monthHeading.innerHTML = txtMonth + ' ' + numYear;
-	mainContainer.appendChild(monthHeading);
+	monthHeading.setAttribute('id', 'monthHeader');
+	monthHeading.innerHTML = '<h2>' + txtMonth + ' ' + numYear + '</h2>';
+	mContainer.appendChild(monthHeading);
 
 	// Allow for Link for forward and backwards on Months
 	function prev() {
 		let setPrev = new Date(numYear, numMonthKey - 1, 1);
 		window.location.hash = setPrev.getFullYear() + '_' + (setPrev.getMonth() + 1);
-		mainContainer.innerHTML = '';
+		mContainer.innerHTML = '';
 		startCalendar();
 	}
 
 	function next() {
 		let setNext = new Date(numYear, numMonthKey + 1, 1);
 		window.location.hash = setNext.getFullYear() + '_' + (setNext.getMonth() + 1);
-		mainContainer.innerHTML = '';
+		mContainer.innerHTML = '';
 		startCalendar();
 	}
 
-	//Create Prev Button
-	let btnPrev = document.createElement("span"); 
+	// Create Prev Button
+	let btnPrev = document.createElement('span'); 
 	btnPrev.addEventListener('click',function(event) {
 		prev();
 	});
@@ -255,8 +250,8 @@ function startCalendar() {
 	btnPrev.classList.add('prev');
 	monthHeading.insertBefore(btnPrev, monthHeading.childNodes[0]);
 
-	//Create Next Button
-	let btnNext = document.createElement("span"); 
+	// Create Next Button
+	let btnNext = document.createElement('span'); 
 	btnNext.addEventListener('click',function(event) {
 		next();
 	});
@@ -264,13 +259,13 @@ function startCalendar() {
 	btnNext.classList.add('next');
 	monthHeading.appendChild(btnNext);
 
-	//Create calendar grid of days
+	// Create calendar grid of days
 	//'<div class="grid">';
 	let grid = document.createElement('div');
 	grid.setAttribute('class', 'grid');
-	mainContainer.appendChild(grid);
+	mContainer.appendChild(grid);
 
-	//Create Days of week
+	// Create Days of week
 	for(let wday of daysInWeek) {
 		//'<div id="' + wday + '" class="weekday">' + wday + '</div>';
 		let weekDay = document.createElement('div');
@@ -280,7 +275,7 @@ function startCalendar() {
 		grid.appendChild(weekDay);
 	}
 
-	//Build off set - placeholders to help set starting day on corret day of the week
+	// Build off set - placeholders to help set starting day on corret day of the week
 	for (i=1; i<=firstWeekDay; i++) {
 		//output += '<div class="offset"></div>';
 		let offset = document.createElement('div');
@@ -288,58 +283,148 @@ function startCalendar() {
 		grid.appendChild(offset);
 	}
 
-	//Build Calendar's days
+	// Build Calendar's days
 	for(let key in calendar) {
 		calendar[key].createDayPlaceIn(grid);
 	}
 
-	let events = {
-		1: {'name' : 'Week 1', 'month': 9, 'day': 15},
-		2: {'name' : 'Week 2', 'month' : 9, 'day' : 22},
-		3: {'name' : 'Week 3', 'month' : 9, 'day' : 29},
-		4: {'name' : 'Week 4', 'month' : 10, 'day' : 6},
-		5: {'name' : 'Week 5', 'month' : 10, 'day' : 13},
-		6: {'name' : 'Week 6', 'month' : 10, 'day' : 20},
-		7: {'name' : 'Week 7', 'month' : 10, 'day' : 27},
-		8: {'name' : 'Week 8', 'month' : 11, 'day' : 3},
-		9: {'name' : 'Week 9', 'month' : 11, 'day' : 10},
-		10: {'name' : 'Week 10', 'month' : 11, 'day' : 17},
-		11: {'name' : 'Week 11', 'month' : 11, 'day' : 24},
-		12: {'name' : 'Week 12', 'month' : 12, 'day' : 1},
-		13: {'name' : 'Week 13', 'month' : 12, 'day' : 8},
-		14: {'name' : 'Week 14', 'month' : 12, 'day' : 15},
-	};
+	// Restore default
+	function restoreDefault() {
+		let events = {
+			1: {'name': 'Week 1', 'month': 9, 'day': 15, 'year': 2019},
+			2: {'name': 'Week 2', 'month': 9, 'day': 22, 'year': 2019},
+			3: {'name': 'Week 3', 'month': 9, 'day': 29, 'year': 2019},
 
-	for(let key in events) {
-		NewEvent(events[key].name, events[key].month, events[key].day, 2019);
+			4: {'name': 'Week 4', 'month': 10, 'day': 6, 'year': 2019},
+			5: {'name': 'Week 5', 'month': 10, 'day': 13, 'year': 2019},
+			6: {'name': 'Week 6', 'month': 10, 'day': 20, 'year': 2019},
+			7: {'name': 'Week 7', 'month': 10, 'day': 27, 'year': 2019},
+			15: {'name': 'Group Meeting at 9:00 MT', 'month': 10, 'day' : 9, 'year': 2019},
+			16: {'name': 'Group Meeting at 9:00 MT', 'month': 10, 'day' : 16, 'year': 2019},
+			17: {'name': 'Group Meeting at 9:00 MT', 'month': 10, 'day' : 23, 'year': 2019},
+			18: {'name': 'Group Meeting at 9:00 MT', 'month': 10, 'day' : 30, 'year': 2019},
+
+			8: {'name': 'Week 8', 'month': 11, 'day': 3, 'year': 2019},
+			9: {'name': 'Week 9', 'month': 11, 'day': 10, 'year': 2019},
+			10: {'name': 'Week 10', 'month': 11, 'day': 17, 'year': 2019},
+			11: {'name': 'Week 11', 'month': 11, 'day': 24, 'year': 2019},
+			19: {'name': 'Group Meeting at 9:00 MT', 'month': 11, 'day' : 6, 'year': 2019},
+			20: {'name': 'Group Meeting at 9:00 MT', 'month': 11, 'day' : 13, 'year': 2019},
+			21: {'name': 'Group Meeting at 9:00 MT', 'month': 11, 'day' : 20, 'year': 2019},
+			22: {'name': 'Group Meeting at 9:00 MT', 'month': 11, 'day' : 27, 'year': 2019},
+
+			12: {'name': 'Week 12', 'month': 12, 'day': 1, 'year': 2019},
+			13: {'name': 'Week 13', 'month': 12, 'day': 8, 'year': 2019},
+			14: {'name': 'Week 14', 'month': 12, 'day': 15, 'year': 2019}
+		};
+
+		runBuilder(events);
 	}
 
-	NewEvent('Group Meeting at 9:00 MT', 10, 9, 2019);
-	NewEvent('Group Meeting at 9:00 MT', 10, 16, 2019);
-	NewEvent('Group Meeting at 9:00 MT', 10, 23, 2019);
-	NewEvent('Group Meeting at 9:00 MT', 10, 30, 2019);
-	
-	//Build schedule of events and holidays
-	for(let key in schedule) {
-		schedule[key].updateDay();
+	// Build Schedule of events and holidays
+	function runBuilder(e) {
+		for(let k in e) {
+			id = NewEvent(e[k].name, parseInt(e[k].month, 10), parseInt(e[k].day, 10), e[k].year);
+			mSchedule[id].updateDay();
+		}
 	}
 
-	//Request Holidays from API
+	// Request Holidays from API for given month
 	var xmlhttp = new XMLHttpRequest();
 	xmlhttp.onreadystatechange = function() {
 		if (this.readyState == 4 && this.status == 200) {
 			let holidays = JSON.parse(this.responseText);
 			for(let key in holidays) {
 				let id = NewHoliday(holidays[key].name, parseInt(holidays[key].month, 10), parseInt(holidays[key].day, 10));
-				schedule[id].updateDay();
-			}			
+				mHolidays[id].updateDay();
+			}
 		}
 	};
-	xmlhttp.open('GET', 'http://forgeofatlas.com/cit261/holidayAPI.php?y=' + numYear + '&m=' + numMonth, true);
+	xmlhttp.open('GET', 'https://forgeofatlas.com/cit261/holidayAPI.php?y=' + numYear + '&m=' + numMonth, true);
 	xmlhttp.send();
 
-	//console.table(schedule);
-}//end app
+	// Create Save Button
+	let btnSave = document.createElement('button'); 
+	btnSave.addEventListener('click',function(event) {
+		saveEventsToLocalStorage();
+	});
+	btnSave.innerHTML = 'Save';
+	btnSave.classList.add('button');
+	mContainer.appendChild(btnSave);
+
+	// Create deleteAll Button
+	let btnErase = document.createElement('button'); 
+	btnErase.addEventListener('click',function(event) {
+		let doit = confirm('This will erase everything!');
+		if (doit == true) {
+			eraseAll();
+		}
+	});
+	btnErase.innerHTML = 'Erase';
+	btnErase.classList.add('button');
+	mContainer.appendChild(btnErase);
+	
+	// Create deleteAll Button
+	let btnRestore = document.createElement('button'); 
+	btnRestore.addEventListener('click',function(event) {
+		let doit = confirm('Restore Default will erase localStorage and load Kevin\'s schedule demo.');
+		if (doit == true) {
+			eraseAll();
+			restoreDefault();
+			saveEventsToLocalStorage();
+		}
+	});
+	btnRestore.innerHTML = 'Restore Default';
+	btnRestore.classList.add('button');
+	mContainer.appendChild(btnRestore);	
+
+	// Erase All
+	function eraseAll() {
+		document.querySelectorAll('.event').forEach(function(a){
+			a.remove()
+		});
+		mSchedule = {}
+		localStorage.clear();
+	}
+
+	// Save - filter event and group by month if needed
+	function saveEventsToLocalStorage() {
+		let monthList = [];
+		// Organize the data
+		for(let key in mSchedule) {
+			// Group items by YYYY-MM key
+			let groupId = 'e' + mSchedule[key].year + ('0' + mSchedule[key].month).slice(-2);
+			monthList[groupId] = [];
+		}
+		for(let m in monthList) {
+			let eventList = [];
+			for(let key in mSchedule) {
+				let groupId = 'e' + mSchedule[key].year + ('0' + mSchedule[key].month).slice(-2);
+				if(m == groupId) {
+					eventList.push(mSchedule[key]);
+				}
+			}
+			// Save Events by Month
+			localStorage.setItem(m, JSON.stringify(eventList));
+		}
+	}
+
+	// Start localStorage
+	if (typeof(localStorage) !== 'undefined') {
+		let dataKey = 'e' + numYear + ('0' + numMonth).slice(-2);
+		if(localStorage && localStorage.getItem(dataKey)) {
+			// Retrieve list of events and parse them back to an array
+			let localEvents = JSON.parse(localStorage.getItem(dataKey));
+			for(let key in localEvents) {
+				let id = NewEvent(localEvents[key].name, parseInt(localEvents[key].month, 10), parseInt(localEvents[key].day, 10), localEvents[key].year);
+				mSchedule[id].updateDay();
+			}
+		}
+	} else {
+		document.getElementById('info').innerHTML = 'Sorry, your browser does not support local storage...';
+	}
+
+}// end app
 
 </script>
 <div id="copyright">Copyright &copy; 2019 Kevin Nielsen - CIT261</div>	
