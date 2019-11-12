@@ -16,11 +16,6 @@
 	<h1>DOM Document Object Model</h1>
 	<p>DOM Manipulation Using createElement, appendChild, insertBefore, removeChild, etc.</p>
 
-	<!--<hr>
-	<p><b>Assignment Notes:</b> .</p>
-	<p><b>Application:</b> <a href="name.html" title="name">name</a></p>
-	<hr>-->
-
 	<h3>Introduction</h3>
 	<p>What is <b>DOM</b>? DOM stands for  <b>Document Object Model</b> (DOM) and is an <b>application programming interface</b> (API) for valid HTML and XML documents.</p>
 	<p>With DOM JavaScript get all the power it needs to  create and modify  HTML dynamically.</p>
@@ -115,7 +110,7 @@ newItem.appendChild(textnode);                    <span class="comment">// Appen
 
 var list = document.getElementById("myList");     <span class="comment">// Get the &lt;ul&gt; element to insert a new node</span>
 list.<b>insertBefore(</b>newItem, list.childNodes[0]<b>)</b>;   <span class="comment">// Insert &lt;li&gt; before the first child of &lt;ul&gt;&lt;/code&gt;</span>
-// OR (I think is better)
+<span class="comment">// OR (I think is better)</span>
 list.<b>insertBefore(</b>newItem, list.<b>firstChild</b><b>)</b>;</code>
 
 
@@ -123,7 +118,7 @@ list.<b>insertBefore(</b>newItem, list.<b>firstChild</b><b>)</b>;</code>
 	<code>var list = document.getElementById("myList");   <span class="comment">// Get the &lt;ul&gt; element with id="myList"</span>
 list.removeChild(list.childNodes[0]);           <span class="comment">// Remove &lt;ul&gt;'s first child node (index 0)</span></code>
 	
-	<h2>Put all together</h2>
+	<h2>Put all together (Pizza)</h2>
 
 	<p><b>Click on topping to build your pizza.</b> (in future add graphics)<br>
 	<i>Items on left will move to bottom right and items on right will move top left, when clicked. Click X to remove.</i></p>

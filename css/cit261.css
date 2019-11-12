@@ -40,6 +40,9 @@ code .comment {
 	color:#afafaf;
 	font-family: monospace;
 }
+code .blue {
+	color:#00C;
+}
 nav, .status {
 	float:right;
 	clear: both;
@@ -73,7 +76,4 @@ nav, .status {
 }
 .highlight:empty {
 	background: none;
-}
-.blue {
-	color:#00C;
 }

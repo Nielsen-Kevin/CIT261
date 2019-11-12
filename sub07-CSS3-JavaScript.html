@@ -4,9 +4,6 @@
 <meta charset="utf-8">
 <title>Sub07: CSS3 using JavaScript</title>
 <link type="text/css" rel=stylesheet href="css/cit261.css">
-<style type="text/css">
-
-</style>
 </head>
 <body>
 <div id="container">
@@ -24,19 +21,18 @@
 for(let i = 0; i < man.length; i++) {
 	document.getElementById(man[i]).<b>style.display</b> = "none";
 }
-...	
 
 <span class="comment">// Wrong letter guessed</span>
 wrong_count += 1;
-document.getElementById(man[wrong_count-1]).<b>style.display</b> = "block";</code>
+document.getElementById(man[wrong_count-1]).<b class="blue">style.display</b> = "block";</code>
 
 	<h3>Style color, Style top</h3>
-	<p><i>The message in the game changes color basE on if your guess is wrong or right. The message also looked to static so I made it move to give it some life.</i></p>
+	<p><i>The message in the game changes color base on if your guess is wrong or right. The message also looked to static so I made it move to give it some life.</i></p>
 	<code>function message(status) {
 	<span class="comment">// Setup messages from array</span>
 	random_number = Math.round(Math.random() * (messages[status].length - 1));	
 	document.getElementById('message').innerHTML = messages[status][random_number];
-	document.getElementById('message').<b>style.color</b> = txtColor[status];
+	document.getElementById('message').<b class="blue">style.color</b> = txtColor[status];
 
 	<span class="comment">// Gives the message some life</span>
 	let pos = -20;
@@ -46,12 +42,39 @@ document.getElementById(man[wrong_count-1]).<b>style.display</b> = "block";</cod
 			clearInterval(id);
 		} else {
 			pos++; 
-			document.getElementById("message").<b>style.top</b> = pos + "px"; 
+			document.getElementById("message").<b class="blue">style.top</b> = pos + "px"; 
 		}
 	}
 }</code>
+	<p><i>No stick figure were harmed in the making of this game.</i></p>
 
-<p><i>No stick figure were harmed in the making of this game.</i></p>
+	<h3>Side Note</h3>
+	<code><span class="comment">//You can set multiple CSS styles in JavaScript at once</span>
+document.getElementById("myElement").<b class="blue">style.cssText</b> = "color: white; background: black";</code>
+	<hr>
+	<p><b>Assignment 2 Notes:</b> these are code chunks examples used in my calendar app. Code taken from working application. Showing the use of css properties changes with JavaScript.</p>
+	<p><b>Application:</b> <a href="calendar.html" title="Calendar">Calendar</a></p>
+	<h3>Class Manipulating</h3>
+	<p><i>When I first read this assignment I didn't catch the "class" part I only thought of CSS manipulating with JavaScript.
+	Note that classes are part of CSS but you don't only use classes strictly for CSS in the html tag. It is just a property. If your class has no CSS styles in it, I would argue that this method is not true CSS manipulation, it is only changing the class. Changing the style directly in JavaScript is true CSS manipulation, what we did above.</i></p>
+	<p>Now the biggest reason to use classes in JavaScript is the huge customization potential. You can style your class with out having to go back to your JavaScript directly modifying the CSS every time you reuse your code for other projects.</p>
+	<p><code>let thisDay = document.createElement('div');
+thisDay.setAttribute('id', this.key);
+thisDay.setAttribute('class', 'day');
+<span class="comment">// Is it today</span>
+	if(calendar[this.key].year == today.getFullYear() && calendar[this.key].month == today.getMonth()+1 && calendar[this.key].day == today.getDate()) {
+	thisDay.<b class="blue">classList.add</b>('today');
+	this.today = true;
+}</code></p>
+	<p><code><span class="comment">// Create Prev Button</span>
+let btnPrev = document.createElement('span'); 
+btnPrev.addEventListener('click',function(event) {
+	prev();
+});
+btnPrev.innerHTML = '<';
+btnPrev.<b class="blue">classList.add</b>('prev');
+monthHeading.insertBefore(btnPrev, monthHeading.childNodes[0]);</code></p
+<p>and 5 other times</p>
 
 </div>
 <div id="copyright">Copyright &copy; 2019 Kevin Nielsen - CIT261</div>

@@ -12,17 +12,54 @@
 <div id="container">
 	<nav><a href="index.html">Home</a></nav>
 	<h1>JSON</h1>
-	<p>JSON Parse, Stringify</p>
+	<p>Parse and Stringify</p>
 
-<!--
 	<hr>
-	<p><b>Assignment Notes:</b> .</p>
-	<p><b>Application:</b> <a href="name.html" title="name">name</a></p>
+	<p><b>Assignment Notes:</b> JSON is a time saver when you need to store or send a lot of data values across your applications or  exchange it across different programming languages.
 	
-	<h3>SumTopic</h3>
-	<code>
-	</code>
--->
+	JSON is a flat string format  of an array of data.  When JSON is received it is parsed back into an array and is easily reused with each of their keys and values.</p>
+	<p>Below is how I used the two JSON functions to use and send JSON data in my calendar app.</p>
+	<p><b>Application:</b> <a href="calendar.html" title="Calendar">Calendar</a></p>
+
+	<h3>JSON.Parse</h3>
+	<p><i>Here I use an AJAX call to get my JSON data and then cover it (parse) back in usable array.</i></p>
+	<p><code>var xmlhttp = new XMLHttpRequest();
+xmlhttp.onreadystatechange = function() {
+	if (this.readyState == 4 && this.status == 200) {
+		let holidays = <b class="blue">JSON.parse(</b>this.responseText<b class="blue">)</b>;
+		for(let key in holidays) {
+			let id = NewHoliday(holidays[key].name, parseInt(holidays[key].month, 10), parseInt(holidays[key].day, 10));
+			mHolidays[id].updateDay();
+		}
+	}
+};
+xmlhttp.open('GET', 'https://forgeofatlas.com/cit261/holidayAPI.php?y=' + numYear + '&m=' + numMonth, true);
+xmlhttp.send();</code></p>
+
+
+	<h3>JSON.Stringify</h3>
+	<p><i>Here I package up my data and stringify it to to store in localStorage. Note that localStorage can only store strings, this make JSON essential in this case.
+</i></p>
+	<p><code>function saveEventsToLocalStorage() {
+	let monthList = [];
+	<span class="comment">// Organize the data</span>
+	for(let key in mSchedule) {
+		<span class="comment">// Group items by YYYY-MM key</span>
+		let groupId = 'e' + mSchedule[key].year + ('0' + mSchedule[key].month).slice(-2);
+		monthList[groupId] = [];
+	}
+	for(let m in monthList) {
+		let eventList = [];
+		for(let key in mSchedule) {
+			let groupId = 'e' + mSchedule[key].year + ('0' + mSchedule[key].month).slice(-2);
+			if(m == groupId) {
+				eventList.push(mSchedule[key]);
+			}
+		}
+		<span class="comment">// Save Events by Month</span>
+		localStorage.setItem(m, <b class="blue">JSON.stringify(</b>eventList<b class="blue">)</b>);
+	}
+}</code></p>
 
 
 </div>

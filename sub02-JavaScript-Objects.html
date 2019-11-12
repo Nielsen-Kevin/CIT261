@@ -19,27 +19,102 @@
 	<p><b>Application:</b> <a href="calendar.html" title="Calendar">Calendar</a></p>
 	
 	<h3>Object Creation Functions</h3>
-	<code>
-	</code>
+	<code>for(let day = 1; day <= totalDays; day++) {
+	obj = new Date(year, month - 1, day);
+	dateKey = obj.getFullYear() + '_' + ('0' + month).slice(-2) + '_' + ('0' + obj.getDate()).slice(-2);
+	<b class="blue comment">// Object Creation Functions</b>
+	calendar[dateKey] = Object.create(CalendarDate);
+	calendar[dateKey].key = dateKey;
+	calendar[dateKey].day = day;
+	calendar[dateKey].weekDay = daysInWeek[obj.getDay()];
+}</code>
 
-	<h3>Inheritance</h3>
-	<code>
-	</code>
-	
-	<h3>Properties</h3>
-	<code>
-	</code>
-	
-	<h3>Methods</h3>
-	<code>
-	</code>
-	
-	<h3>Instantiation</h3>
-	<code>
-	</code>
+	<h3>Inheritance with Properties &amp; Methods</h3>
+	<p><code>var CalendarDate = {
+	<b class="blue comment">// Properties</b>
+	key: '',
+	day: '',
+	month: month,
+	year: year,
+	weekDay: '',
+	holiday: '',
+	today: false,
+	<b class="blue comment">// Methods</b>
+	button: function() {
+		addEvent(this.year + '-' + ('0' + this.month).slice(-2) + '-' + ('0' + this.day).slice(-2));
+	},
+	createDayPlaceIn: function(obj) {
+		let thisDay = document.createElement('div');
+		thisDay.setAttribute('id', this.key);
+		thisDay.setAttribute('class', 'day');
+		<span class="comment">// Is it today</span>
+		if(calendar[this.key].year == today.getFullYear() && calendar[this.key].month == today.getMonth()+1 && calendar[this.key].day == today.getDate()) {
+			thisDay.classList.add('today');
+			this.today = true;
+		}
+		<span class="comment">// Create on click</span>
+		thisDay.onclick = function() {
+			calendar[this.id].button();
+		};
+		obj.appendChild(thisDay);
+		<span class="comment">// Add Label</span>
+		let dayLabel = document.createElement('label');
+		dayLabel.innerHTML = calendar[this.key].day;
+		thisDay.appendChild(dayLabel);
+	}
+}</code></p>
+<p><code><span class="comment">// Build Calendar's days</span>
+for(let key in calendar) {
+	calendar[key].createDayPlaceIn(grid);
+}</code></p>
+	<h3>Instantiation with Properties &amp; Methods</h3>
+	<p><code><b class="comment blue">// Instantiation</b>
+var DateObject = function(key, type, name, day, month, year) {
+	<b class="blue comment">// Properties</b>
+	this.type = type;
+	this.name = name;
+	this.day = day;
+	this.month = month;
+	this.year = year;
+	<b class="blue comment">// Methods</b>
+	this.id = function() {
+		return this.year + '_' + ('0' + this.month).slice(-2) + '_' + ('0' + this.day).slice(-2);
+	}
+	this.updateDay = function() {
+		if(this.month == numMonth) {
+			let goWhere = document.getElementById(this.id())
+			let dateObject = document.createElement('div'); 
+			dateObject.innerHTML = this.name;
+			dateObject.setAttribute('id', key);
+			dateObject.classList.add(this.type);
+			goWhere.appendChild(dateObject);
+			
+			<span class="comment">// Create on click</span>
+			if(this.type == 'event') {
+				dateObject.onclick = function(event) {
+					event.stopPropagation();// Stop day div from being clicked too
+					
+					editEvent(key, name, year + '-' + ('0' + month).slice(-2) + '-' + ('0' + day).slice(-2));
+				};
+			}
+		}
+	}
+} </code></p>
+<p><code>var NewEvent = function(name, month, day, year) {
+	let key = 'e' + eventCount;
+	mSchedule[key] = new DateObject(key, 'event', name, day, month, year);
+	eventCount++;
+	return key;
+}
+...
 
-	<h3>Put it all together.</h3>
-	<p>You will get something more, see <a href="calendar.html" title="Calendar">Calendar</a>.</p>
+<span class="comment">// Build Schedule of events and holidays</span>
+function runBuilder(e) {
+	for(let k in e) {
+		id = NewEvent(e[k].name, parseInt(e[k].month, 10), parseInt(e[k].day, 10), e[k].year);
+		mSchedule[id].updateDay();
+	}
+}</code></p>
 </div>
 <div id="copyright">Copyright &copy; 2019 Kevin Nielsen - CIT261</div>
 </body>
