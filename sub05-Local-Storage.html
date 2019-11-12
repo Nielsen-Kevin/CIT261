@@ -46,31 +46,32 @@ table td:nth-child(3) {
 	<h3>Different Names</h3>
 	<p>localStorage, DOM storage or web storage. All these names are in use, and all reference the same thing.</p>
 	<h3>Properties </h3>
-	<code>localStorage.length //Read only</code>
+	<code>localStorage.length <span class="comment">//Read only</span></code>
 	<p class="dent">Returns an integer representing the number of data items stored in the Storage object.</p>
 	<h3>Methods</h3>
 	<code>localStorage.key()</code>
 	<p class="dent">When passed a number n, this method will return the name of the nth key in the storage.</p>
-	<code>// retrieve a value
+	<code><span class="comment">// retrieve a value</span>
 value = localStorage.getItem( 'key' );</code>
 	<p class="dent">When passed a key name, will return that key's value.</p>
-	<code>// store a value
+	<code><span class="comment">// store a value</span>
 localStorage.setItem( 'key', 'value' );</code>
 	<p class="dent">When passed a key name and value, will add that key or update that key's value if it already exists.</p>
-	<code>// remove the value
+	<code><span class="comment">// remove the value</span>
 localStorage.removeItem( 'key' );</code>
 	<p class="dent">When passed a key name, will remove that key from the storage.</p>
 	<code>localStorage.clear()</code>
 	<p class="dent">When invoked, will empty all keys out of the storage.</p>
 	<h3>Code Example</h3>
-	<code>// only string values can be stored so for objects, use JSON
+	<code><span class="comment">// only string values can be stored so for objects, use JSON</span>
 var objArray = {
-  title: 'Cookies are old',
-  author: 'Gordan'
+  title: 'unknown',
+  firstName: 'John',
+  lastName: 'Doe'
 }
 localStorage.setItem( 'objArray', JSON.stringify( objArray ) );
 
-// and to retrieve
+<span class="comment">// and to retrieve</span>
 var objArray = JSON.parse( localStorage.getItem( 'objArray' ) );</code>
 	<h3>localStorage vs sessionStorage vs Cookies</h3>
 	<table>
