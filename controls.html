@@ -1,0 +1,466 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Keyboard, Mouse, and Touch with Canvas</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<style type="text/css">
+* {
+	font-family: Arial, Helvetica, sans-serif;
+}
+html, body {
+	position: relative;
+	margin: 0;
+	overflow: hidden;
+}
+canvas {
+    border:1px solid #d3d3d3;
+    background-color: #f1f1f1;
+	width:100%;
+	height:100%;
+}
+#caption {
+	top: 0;
+	padding: 30px;
+}
+#copyright {
+	bottom: 10px;
+	margin: 10px auto;
+	width: 100%;
+	color: #666;
+	font-size: .8em;
+	text-align: center;
+	text-transform: uppercase;
+}
+#caption, #copyright {
+	position: absolute;
+	/* disable selecting text */
+	user-select: none;
+	-moz-user-select: none;
+	-khtml-user-select: none;
+	-webkit-user-select: none;
+	-o-user-select: none;
+	/* make click through */
+	pointer-events: none;
+	background: none !important;
+
+}
+</style>
+</head>
+<body onLoad="startup(); return true;">
+<div id="caption">
+	<p><b>Keyboard:</b> Use keyboard to move red square with arrow keys and if your a gamers W A S D works too. Resize red square by pressing + or - key. Hold Shift to go fast.</p>
+	<p><b>Mouse:</b> Light blue dot, click and drag to see mouse change states.</p>
+	<p><b>Touch:</b> Use touch screen to interact with multi-touch, and pinch to resize red square.</p>
+	<p><i>Try dragging the red square with mouse or touch.</i></p>
+</div>
+<canvas id="canvas"></canvas>
+<div id="copyright">Copyright &copy; 2019 Kevin Nielsen - CIT261</div>
+<script type="text/javascript">
+
+var canvas = document.getElementById('canvas');
+var ctx = canvas.getContext('2d');
+canvas.width  = window.innerWidth;
+canvas.height = window.innerHeight;
+
+function startup() {
+	canvas.width  = window.innerWidth;
+	canvas.height = window.innerHeight;
+	window.addEventListener('resize', resizeCanvas);
+
+	document.addEventListener('keydown', keyDownHandler);
+	document.addEventListener('keyup', keyUpHandler);
+
+	document.addEventListener('mousedown', mouseDownHandler);
+	document.addEventListener('mousemove', mouseMoveHandler);
+	document.addEventListener('mouseup', mouseUpHandler);
+		
+	// Bind low - binding to the element
+	canvas.addEventListener('touchstart', onTouchStart);
+	// Bind Late - whole body
+	document.body.addEventListener('touchmove', onTouchMove);
+	document.body.addEventListener('touchend', onTouchEnd);
+	document.body.addEventListener('touchcancel', onTouchCancel);
+
+	AnimationLoop();
+}
+function resizeCanvas() {
+	difW = canvas.width - window.innerWidth;
+	difH = canvas.height - window.innerHeight;
+	redSquare.x -= difW/2;
+	redSquare.y -= difH/2;
+	canvas.width  = window.innerWidth;
+	canvas.height = window.innerHeight;
+};
+//////////////////////////////////////////////////////////////
+// Keyboard Controls
+//////////////////////////////////////////////////////////////
+// Control state
+var KeyPressed = {
+	up: false,
+	down: false,
+	left: false,
+	right: false,
+};
+// Key Map
+var keyboard = { left: ['ArrowLeft','KeyA'], up: ['ArrowUp','KeyW'], right: ['ArrowRight','KeyD'], down: ['ArrowDown','KeyS'] };
+
+function keyDownHandler(event) {
+    event.preventDefault();
+    // Directional controls using key map
+	if (keyboard['left'].includes(event.code)) {
+		KeyPressed.left = true;
+	} else if (keyboard['up'].includes(event.code)) {
+		KeyPressed.up = true;
+    } else if (keyboard['right'].includes(event.code)) {
+		KeyPressed.right = true;
+    } else if (keyboard['down'].includes(event.code)) {
+		KeyPressed.down = true;
+	}
+	// RedSquare Resize
+	if(event.key == '+' && redSquare.width <= 300) {
+		redSquare.resize(5);
+	} else if(event.key == '-' && redSquare.width >= 10) {
+		redSquare.resize(-5);
+	}
+	
+	// RedSquare increase speed on shift
+	if(event.keyCode === 16) {
+		redSquare.speed = 10;
+	}
+	// Key press test
+	text.keys = event.keyCode + ' : ' + event.key + ' ' + event.code;
+	text.x = canvas.width / 2;
+	text.color = 'rgba(128,0,128,1)';
+	text.y = canvas.height - 50;	
+};
+function keyUpHandler(event) {
+    event.preventDefault();
+
+	if (keyboard['left'].includes(event.code)) {
+		KeyPressed.left = false;
+	} else if (keyboard['up'].includes(event.code)) {
+		KeyPressed.up = false;
+    } else if (keyboard['right'].includes(event.code)) {
+		KeyPressed.right = false;
+    } else if (keyboard['down'].includes(event.code)) {
+		KeyPressed.down = false;
+	}
+	// RedSquare reset speed on up
+	if(event.keyCode === 16) {
+		redSquare.speed = 3;
+	}
+	// Key press test messages fade out
+	alpha = 1;
+	if(!text.alpha) {
+		text.alpha = true;
+		interval = setInterval(function () {
+			text.color = 'rgba(128,0,128, ' + alpha + ')';
+			if(!KeyPressed.down) {
+				alpha = alpha - 0.05;
+				if (alpha < -0.05) {
+					text.alpha = false;
+					clearInterval(interval);
+				}
+			} else {
+				alpha = 1;
+			}
+		}, 50);
+	};
+};
+//////////////////////////////////////////////////////////////
+// Mouse Controls
+//////////////////////////////////////////////////////////////
+// Control state
+var MousePressed = {
+	down: false,
+	dragging: false,
+	x: -5,
+	y: -5
+};
+// Hide mouse cursor on canvas
+canvas.style.cursor = 'none';
+
+function mouseDownHandler(event) {	
+	MousePressed.down = true;
+	getMousePos(event);
+	// chick on square
+	redSquare.hitTest(MousePressed.x, MousePressed.y, 'mouse');
+}
+function mouseMoveHandler(event){
+	if(MousePressed.down) {
+		MousePressed.dragging = true;
+	} else {
+		MousePressed.dragging = false;
+	}
+	getMousePos(event);
+	// drag square + offset
+	if(redSquare.drag == true){
+		redSquare.x = MousePressed.x + redSquare.offsetX;
+    	redSquare.y = MousePressed.y + redSquare.offsetY;
+	}
+}
+function mouseUpHandler(event){
+	MousePressed.down = false;
+	redSquare.resetDrag();
+}
+function getMousePos(event) {
+	if (event.offsetX) {
+		MousePressed.x = event.offsetX;
+		MousePressed.y = event.offsetY;
+	} else if (event.x) {
+		MousePressed.x = event.layerX;
+		MousePressed.y = event.layerY;
+	}
+}
+//////////////////////////////////////////////////////////////
+// Touch Controls
+//////////////////////////////////////////////////////////////
+var ongoingTouches = [];
+var pinch = {active: false, start: 0, end: 0};
+
+function onTouchStart(event) {
+	event.preventDefault();
+	let touches = event.changedTouches;
+	for (let i = 0; i < touches.length; i++) {
+		ongoingTouches.push({
+			identifier: touches[i].identifier,
+			num: touches[i].identifier + 1,
+			radius: 5,
+			x: touches[i].pageX,
+			y: touches[i].pageY,
+			color: 'black',
+			// touch square
+			target: redSquare.hitTest(touches[i].pageX, touches[i].pageY, 'touch:' + touches[i].identifier)
+		});
+	}
+	// pinch gestures start
+	if (event.touches.length === 2 && event.touches.length <= 2 && redSquare.drag == false) {
+		setTimeout(function(){
+			pinch.active = true;
+		}, 500); 
+		
+		pinch.start = Math.hypot(event.touches[0].pageX - event.touches[1].pageX, event.touches[0].pageY - event.touches[1].pageY);
+	} else {
+		pinch.active = false;
+	}
+}
+function onTouchMove(event) {
+	let touches = event.changedTouches;
+	for (let i = 0; i < touches.length; i++) {
+		let idx = ongoingTouchIndexById(touches[i].identifier);
+		if (idx >= 0) {
+			ongoingTouches[idx].x = touches[i].pageX;
+			ongoingTouches[idx].y = touches[i].pageY;
+			// drag square + offset
+			if(redSquare.drag && ongoingTouches[idx].target) {
+				redSquare.x = touches[i].pageX + redSquare.offsetX;
+				redSquare.y = touches[i].pageY + redSquare.offsetY;
+			}
+		}
+	}
+	// Check if pinch is still only two fingers + no pinch with grag
+	if (ongoingTouches.length !== 2 || redSquare.drag == true) {
+		pinch.active = false;
+	}
+	// pinch gestures move
+	if (pinch.active) {
+		pinch.end = Math.hypot(event.touches[0].pageX - event.touches[1].pageX, event.touches[0].pageY - event.touches[1].pageY);
+		dist = pinch.start - pinch.end;
+		// RedSquare Resize
+		if(dist < 1.0 && redSquare.width <= 300) {
+			redSquare.resize(2);
+		} else if(dist > 1.0 && redSquare.width >= 10) {
+			redSquare.resize(-2);
+		}
+	}
+}
+function onTouchEnd(event) { 
+	event.preventDefault();
+	let touches = event.changedTouches;	
+	for (var i = 0; i < touches.length; i++) {
+		var idx = ongoingTouchIndexById(touches[i].identifier);
+		if (idx >= 0) {
+			// Remove drag
+			if(redSquare.drag && ongoingTouches[idx].target){
+				redSquare.resetDrag();
+			}
+			ongoingTouches.splice(idx, 1);
+		}
+	}
+	// pinch gestures end
+	if (pinch.active) {
+		pinch.active = false;
+	}
+}
+function onTouchCancel(event) { 
+	event.preventDefault();
+	let touches = event.changedTouches;
+	for (let i = 0; i < touches.length; i++) {
+		let idx = ongoingTouchIndexById(touches[i].identifier);
+		ongoingTouches.splice(idx, 1);
+	}
+	console.log('TouchCancel');
+}
+function ongoingTouchIndexById(idToFind) {
+	for (let i = 0; i < ongoingTouches.length; i++) {
+		let id = ongoingTouches[i].identifier;
+	
+		if (id == idToFind) {
+			return i;
+		}
+	}
+	return -1;
+}
+//////////////////////////////////////////////////////////////
+// Render Objects
+//////////////////////////////////////////////////////////////
+var redSquare = {
+	height: 40,
+	width: 40,
+	x: canvas.width / 2 - 20,
+	y: canvas.height / 2 - 20, 
+	color: 'red',
+	speed: 3,
+	drag: false,
+	dragBy: false,
+	offsetX: 0,
+	offsetY: 0,
+	hitTest: function(x,y,by=true) {
+		// stop from being drogged by two fingers 
+		if(this.dragBy)
+			return false;
+		// drag square + offset
+		if(x > this.x && x < this.x + this.width && y > this.y && y < this.y + this.height) {
+			this.offsetX = this.x - x;
+			this.offsetY = this.y - y;
+			this.drag = true;
+			this.dragBy = by
+			return true;
+		} else {
+			return false;	
+		}
+	},
+	resetDrag: function() {
+		this.drag = false;
+		this.dragBy = false;
+	},
+	resize: function(amount) {
+		// RedSquare Resize
+		redSquare.width += amount;
+		redSquare.height += amount;
+		redSquare.x -= amount/2;
+		redSquare.y -= amount/2;
+	}
+}
+var text = {
+	keys: '',
+	x: 0,
+	y: 0, 
+	color: 'purple',
+	alpha: false
+}
+function renderCanvas() {
+	ctx.fillStyle = '#FEFEFE';
+	ctx.fillRect(0, 0, canvas.width, canvas.height);
+}
+function renderGrid(){
+    for (var x = 40; x <= canvas.width; x += 40) {
+        ctx.moveTo(0.5 + x, 0);
+        ctx.lineTo(0.5 + x, canvas.height);
+    }
+    for (var x = 40; x <= canvas.height; x += 40) {
+        ctx.moveTo(0, 0.5 + x);
+        ctx.lineTo(canvas.width, 0.5 + x);
+    }
+	ctx.lineWidth = 1;
+    ctx.strokeStyle = '#EEE';
+    ctx.stroke();
+}
+function renderRedSquare()  {
+	// Wall
+	if(redSquare.x > canvas.width) {
+		redSquare.x = 0;
+	}
+	if(redSquare.y > canvas.height) {
+		redSquare.y = 0;
+	}
+	if(redSquare.x < 0 - redSquare.width) {
+		redSquare.x = canvas.width ;
+	}
+	if(redSquare.y < 0 - redSquare.height) {
+		redSquare.y = canvas.height;
+	}
+	// Move
+	if (KeyPressed.up) {
+		redSquare.y -= redSquare.speed;
+	} else if (KeyPressed.down) {
+		redSquare.y += redSquare.speed;
+	}
+	if (KeyPressed.left) {
+		redSquare.x -= redSquare.speed;
+	} else if (KeyPressed.right) {
+		redSquare.x += redSquare.speed;
+	}
+	ctx.fillStyle = redSquare.drag ? 'blue' : 'red';
+	ctx.fillRect(redSquare.x, redSquare.y, redSquare.width, redSquare.height);
+}
+function renderText() {
+	ctx.fillStyle = text.color;
+	ctx.textAlign = 'center';
+	ctx.font = 'italic 20pt Arial';
+	ctx.fillText(text.keys, text.x, text.y, canvas.width);
+}
+//////////////////////////////////////////////////////////////
+// Main Animation
+//////////////////////////////////////////////////////////////
+function AnimationLoop(event){
+	
+	renderCanvas();
+	renderGrid();
+	renderRedSquare();
+	renderText();
+	
+	for (let i = 0; i < ongoingTouches.length; i++) {
+		ctx.beginPath();
+		ctx.lineWidth = 4;
+		ctx.strokeStyle = ongoingTouches[i].color;
+		ctx.arc(ongoingTouches[i].x, ongoingTouches[i].y, ongoingTouches[i].radius, 0, 2 * Math.PI, false);
+		ctx.stroke();
+		
+		ctx.fillStyle = ongoingTouches[i].color;
+		ctx.textAlign = 'center';
+		ctx.font = '12pt Arial';
+		ctx.fillText(ongoingTouches[i].num, ongoingTouches[i].x - 40, ongoingTouches[i].y - 40, ongoingTouches[i].radius);
+		
+		// grow on hold
+		if(ongoingTouches[i].radius < 50) {
+			ongoingTouches[i].radius += 2.5;
+		} else {
+			ongoingTouches[i].radius = 50;
+		}
+	}
+	if(MousePressed.down) {
+		ctx.beginPath();
+		ctx.moveTo(MousePressed.x, 0);
+		ctx.lineTo(MousePressed.x, canvas.height);
+		ctx.strokeStyle = 'green';
+		ctx.stroke();
+		ctx.beginPath();
+		ctx.moveTo(0, MousePressed.y);
+		ctx.lineTo(canvas.width, MousePressed.y);
+		ctx.strokeStyle = 'green';
+		ctx.stroke();
+	}
+	if(!MousePressed.dragging) {
+		ctx.fillStyle = 'lightblue';
+		ctx.beginPath();
+		ctx.arc(MousePressed.x, MousePressed.y, 5, 0, Math.PI*2);
+		ctx.fill();
+	}
+	// better than setInterval
+	window.requestAnimationFrame(AnimationLoop)
+}
+</script>
+</body>
+</html>

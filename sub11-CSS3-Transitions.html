@@ -2,10 +2,263 @@
 <html>
 <head>
 <meta charset="utf-8">
-<title>Sub11: CSS3 Transitions</title>
+<title>CSS3 Transitions</title>
 <link type="text/css" rel=stylesheet href="css/cit261.css">
 <style type="text/css">
+.block {
+	width: 780px;
+	display: table;
+	text-align: center;
+	font-weight: bold;
+	color: white;
+}
+.block .square {
+	display: inline-block;
+	margin: 10px;
+	vertical-align: middle;
+}
+.block p {
+	color: white;
+	text-align: center;
+	font-weight: bold;
+	font-size: 20px;
+}
+.square {
+	border-radius: 10px;
+	height: 200px;
+	width: 200px;
+	position: relative;
+	background-color: darkturquoise;
+	box-shadow: 3px 3px 5px #999999;
+	transition: all 1s;
+}
+.square2 {
+	position: absolute;
+	border-radius: 10px;
+	height: 200px;
+	width: 200px;
+}
+.enlarge {
+	background-color: mediumaquamarine;
+	transition: transform 1s, background-color 2s;
+}
+.enlarge:hover {
+	transform: scale(1.2);
+	background-color: salmon;
+}
+.shrink {
+	background-color: mediumaquamarine;
+	transition: all 1s;
+}
+.shrink:hover {
+	transform: scale(0.8);
+	background-color: #FF0;
+	color: blue;
+}
+.shrink p {
+	transition: color 2s;
+}
+.shrink:hover p {
+	color: #000;
+}
+.rotate {
+	background-color: mediumaquamarine;
+	transition: transform 3s, border-radius 4s;
+	transition-timing: ease-in-out;
+}
+.rotate:hover {
+	background-color: salmon;
+	transform: rotate(540deg);
+	border-radius: 2% 50%;
+}
+.toCircle {
+	background-color: #53a7ea;
+	overflow: hidden;
+	transition: all 1s;
+}
+.toCircle .squareText {
+	opacity: 1;
+	transform: translateX(5px);
+	transition: opacity 0.5s 2s, transform 0.5s 0.5s;
+}
+.toCircle .circleText {
+	opacity: 0;
+	transform: translateX(100px);
+	transition: opacity 0.5s 1s, transform 0.5s 1s;
+	position: absolute;
+	top: 65px;
+}
+.toCircle:hover {
+	border-radius: 50%;
+	background-color: #FF6;
+	color: #000;
+}
+.toCircle:hover .squareText {
+	opacity: 0;
+	transform: translateX(-400px);
+}
+.toCircle:hover .circleText {
+	opacity: 1;
+	transform: translateX(50px);
+	color: black;
+}
+.fadeIn {
+	opacity: 0;
+	transition: background-color 1s, opacity 1s;
+	background-color: #2b3f53;
+}
+.fadeIn:hover {
+	opacity: 1;
+}
+.fadeOut {
+	background-color: #2b3f53;
+	transition: transform 0.8s, opacity 1s;
+	opacity: 1;
+}
+.fadeOut:hover {
+	transform: translate(20px, 20px);
+	opacity: 0;
+}
+.perspective {
+	perspective: 600px;
+}
+.flipY, .flipX, .flipD {
+	width: 100%;
+	height: 100%;
+	transition: transform 1s;
+	transform-style: preserve-3d;
+	position: relative;
+}
+.flipY:hover {
+	transform: rotateY(180deg);
+}
+.flipX:hover {
+	transform: rotateX(180deg);
+}
+.flipD:hover {
+	transform: rotate3d(-1, -1, 0, 180deg);
+}
+.cardFace {
+	border-radius: 10px;
+	position: absolute;
+	width: 100%;
+	height: 100%;
+	line-height: 200px;
+	color: white;
+	text-align: center;
+	font-weight: bold;
+	font-size: 30px;
+	backface-visibility: hidden;
+}
+.cardFaceFront {
+	background-color: #FF5E5E;
+}
+.cardFaceBack {
+	background-color: #39F;
+	transform: rotateY(180deg);
+}
 
+.bar {
+	border-radius: 2px;
+	height: 25px;
+	width: 25px;
+	margin: 7px 0;
+	overflow: hidden;
+	line-height: 25px;
+	white-space: nowrap;
+}
+.bars:hover .bar {
+	width: 100%;
+}
+.bar0 {
+	background-color: PaleTurquoise;
+	transition: width 2s linear;
+}
+.bar1 {
+	background-color: salmon;
+	transition: width 2s ease;
+}
+.bar2 {
+	background-color: lightskyblue;
+	transition: width 2s ease-in;
+}
+.bar3 {
+	background-color: thistle;
+	transition: width 2s ease-out;
+}
+.bar4 {
+	background-color: mediumturquoise;
+	transition: width 2s ease-in-out;
+}
+.bar5 {
+	background-color: khaki;
+	transition: width 2s cubic-bezier(0, 1, 0.98, 0);
+}
+
+.wrap {
+	position:relative;
+	height: 200px;
+}
+.wrap:hover .box {
+	height: 100px;
+}
+.box {
+	height: 46px;
+	width: 46px;
+	background-color: steelblue;
+	border-radius: 10px;
+	display: inline-block;
+}
+.box p {
+	padding: 4px 0;
+	font-size:12px;
+}
+.group:hover .box {
+	transform: scale(1.4);
+}
+.box1 {
+	background-color: #60D4C8;
+	transition: all .5s;
+}
+.box2 {
+	background-color: #46BAAF;
+	transition: all 1s;
+}
+.box3 {
+	background-color: #3EA69B;
+	transition: all 2s;
+}
+.box4 {
+	background-color: #276760;
+	transition: all 3s;
+}
+
+.delay {
+	position:absolute;
+	bottom: -3px;
+	left: 2px;
+}
+.delay p {
+	position:absolute;
+	bottom: 0px;
+	padding: 10px 8px 0;
+}
+.boxDelay1 {
+	background-color: #276760;
+	transition: all .5s .5s;
+}
+.boxDelay2 {
+	background-color: #60D4C8;
+	transition: all 1s 1s;
+}
+.boxDelay3 {
+	background-color: #46BAAF;
+	transition: all 2s 2s;
+}
+.boxDelay4 {
+	background-color: #3EA69B;
+	transition: all 3s 3s;
+}
 </style>
 </head>
 <body>
@@ -13,17 +266,99 @@
 	<nav><a href="index.html">Home</a></nav>
 	<h1>CSS3 Transitions</h1>
 	<p>Designing, Defining and Triggering CSS3 Transitions without Custom Libraries (Thought Library)</p>
-
-<!--
-	<hr>
-	<p><b>Assignment Notes:</b> .</p>
-	<p><b>Application:</b> <a href="name.html" title="name">name</a></p>
-	
-	<h3>SumTopic</h3>
-	<code>
-	</code>
--->
-
+	<div class="block">
+		<div class='square enlarge'>
+			<p>Enlarge</p>
+		</div>
+		<div class="square">
+			<div class="group">
+				<div class="box1 box"></div>
+				<div class="box2 box"></div>
+				<div class="box3 box"></div>
+				<div class="box1 box"></div>
+				<div class="box2 box"></div>
+				<div class="box3 box"></div>
+				<div class="box1 box"></div>
+				<div class="box2 box"></div>
+				<div class="box3 box"></div>
+				<div class="box1 box"></div>
+				<div class="box2 box"></div>
+				<div class="box3 box"></div>
+				<div class="box1 box"></div>
+				<div class="box2 box"></div>
+				<div class="box3 box"></div>
+				<div class="box1 box"></div>
+			</div>
+		</div>
+		<div class='square shrink'>
+			<p>Shrink</p>
+		</div>
+		<div class='square'>
+			<div class="square2 fadeOut">
+				<p>Fade Out</p>
+			</div>
+			<p><br>
+				<br>
+				A hidden message comes into view</p>
+		</div>
+		<div class='square rotate'>
+			<p>Rotate</p>
+		</div>
+		<div class='square'>
+			<div class="square2 fadeIn">
+				<p><br>
+					<br>
+					A hidden message comes into view</p>
+			</div>
+			<p>Fade In</p>
+		</div>
+		<div class='square perspective'>
+			<div class="flipX">
+				<div class="cardFace cardFaceFront">flip</div>
+				<div class="cardFace cardFaceBack">vertical</div>
+			</div>
+		</div>
+		<div class='square perspective'>
+			<div class="flipY">
+				<div class="cardFace cardFaceFront">flip</div>
+				<div class="cardFace cardFaceBack">horizontal</div>
+			</div>
+		</div>
+		<div class='square perspective'>
+			<div class="flipD">
+				<div class="cardFace cardFaceFront">flip</div>
+				<div class="cardFace cardFaceBack">diagonal</div>
+			</div>
+		</div>
+		<div class="square">
+			<div class="bars">
+				<div class="bar0 bar">linear</div>
+				<div class="bar1 bar">ease</div>
+				<div class="bar2 bar">ease-in</div>
+				<div class="bar3 bar">ease-out</div>
+				<div class="bar4 bar">ease-in-out</div>
+				<div class="bar5 bar">cubic-bezier</div>
+			</div>
+		</div>
+		<div class='square toCircle'>
+			<p class="squareText">I'm a Square</p>
+			<p class="circleText">I'm a Circle</p>
+		</div>
+		<div class="square">
+			<div class="wrap">
+				<div class="box1 box"><p>.5s</p></div>
+				<div class="box2 box"><p>1s</p></div>
+				<div class="box3 box"><p>2s</p></div>
+				<div class="box4 box"><p>3s</p></div>
+				<div class="delay">
+					<div class="boxDelay1 box"><p>delay<br>.5s</p></div>
+					<div class="boxDelay2 box"><p>delay<br>1s</p></div>
+					<div class="boxDelay3 box"><p>delay<br>2s</p></div>
+					<div class="boxDelay4 box"><p>delay<br>3s</p></div>
+				</div>
+			</div>
+		</div>
+	</div>
 </div>
 <div id="copyright">Copyright &copy; 2019 Kevin Nielsen - CIT261</div>
 </body>

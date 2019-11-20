@@ -1,0 +1,159 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>CSS3 Eye</title>
+
+<style type="text/css">
+html, body {
+	height:100%;
+	margin: 0;
+	position:relative;
+}
+/*CSS credit to https://cssanimation.rocks/spheres/ */
+.stage {
+	width: 300px;
+	height: 300px;
+	display: inline-block;
+	margin: 20px;
+	perspective: 1200px;
+	perspective-origin: 50% 50%;
+	transform-style: preserve-3d;
+	transform: rotateY(0.01deg);
+}
+.ball {
+	display: inline-block;
+	width: 100%;
+	height: 100%;
+	margin: 0;
+	border-radius: 50%;
+	position: relative;
+	background: radial-gradient(circle at 50% 40%, #fcfcfc, #efeff1 66%, #9b5050 100%);
+}
+.ball:after {
+	content: "";
+	position: absolute;
+	top: 5%;
+	left: 10%;
+	width: 100%;
+	height: 100%;
+	border-radius: 50%;
+	background: radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.8), rgba(255, 255, 255, 0.8) 14%, rgba(255, 255, 255, 0) 24%);
+	transform: translateX(-80px) translateY(-90px) skewX(-20deg);
+}
+.iris {
+	width: 40%;
+	height: 40%;
+	margin: 30%;
+	border-radius: 50%;
+	background: radial-gradient(circle at 50% 50%, #208ab4 0%, #6fbfff 30%, #4381b2 100%);
+	transform: translateX(68px) translateY(-60px) skewX(0deg) skewY(0eg);
+	position: absolute;
+	transition: transform ease-out 200ms;
+}
+.iris:before {
+	content: "";
+	display: block;
+	position: absolute;
+	width: 37.5%;
+	height: 37.5%;
+	border-radius: 50%;
+	top: 31.25%;
+	left: 31.25%;
+	background: black;
+}
+.iris:after {
+	content: "";
+	display: block;
+	position: absolute;
+	width: 31.25%;
+	height: 31.25%;
+	border-radius: 50%;
+	top: 18.75%;
+	left: 18.75%;
+	background: rgba(255, 255, 255, 0.2);
+}
+
+
+.center {
+	display:block;
+	margin: 0 auto;
+	position: absolute;
+	top: 40%;
+	left: 50%;
+	transform: translate(-50%, -60%);
+}
+#info {
+	position: absolute;
+	bottom: 20px;
+	left: 30px;
+}
+</style>
+</head>
+
+<body>
+<div class="center">
+	<section class="stage">
+		<figure class="ball">
+			<span class="iris"></span>
+		</figure>
+	</section>
+</div>
+<p id="info"></p>
+<script type="text/javascript" language="javascript">
+//My code
+document.addEventListener('mousemove', (e) => {
+
+	var ball = document.querySelector('.ball');
+	var iris = document.querySelector('.iris');
+    let x = e.clientX;
+    let y = e.clientY;
+	let width = innerWidth;
+    let height = innerHeight;
+
+	let halfX = innerWidth/2;
+	let halfY = innerHeight/2;
+	let newX = e.clientX - halfX;//offset X
+	let newY = e.clientY - halfY;//offset Y
+	
+	let translateX = Math.round(newX * 136 / innerWidth);
+	let translateY = Math.round(newY * 136 / innerHeight);
+
+	let skewX = Math.round(newX * 15 / innerWidth);
+	let skewY = Math.round(newY * 15 / innerHeight);
+
+	if(x < width-width/3 && x > width/3) {
+		hSide = 'center';
+	} else if(x < halfX) {
+		hSide = 'left';
+	} else if (x > halfX) {
+		hSide = 'right';
+	}
+	if(y < height-height/3 && y > height/3) {
+		vSide = 'center';
+	} else if(y < halfY) {
+		vSide = 'top';
+	} else if (y > halfY) {
+		vSide = 'bottom';
+	}
+	
+	if(vSide == 'top' && hSide == 'right') {
+		skewY *= -1;
+	} else if(vSide == 'top' && hSide == 'left') {
+		//good
+	} else if (vSide == 'bottom' && hSide == 'right') {
+		skewX *= -1;
+		skewY *= -1;
+	} else if (vSide == 'bottom' && hSide == 'left') {
+		skewX *= -1;
+	} else if (vSide == 'center' || hSide == 'center') {
+		skewX = 0;
+		skewY = 0;
+	}
+
+	iris.style.transform = 'translateX(' + translateX + 'px)' + 'translateY(' + translateY + 'px)' + ' skewX(' + skewX + 'deg) skewY(' + skewY + 'deg) scaleX(0.95)';
+	document.getElementById('info').innerHTML = 'XY: ' + newX + ', ' + newY + ' Side: ' + vSide + ' ' + hSide + ' translateXY: ' + translateX + ', ' + translateY + ' skewXY: ' + skewX + ', ' + skewY;
+});
+</script>
+</body>
+</html>

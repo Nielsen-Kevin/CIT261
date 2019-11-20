@@ -2,11 +2,16 @@
 <html>
 <head>
 <meta charset="utf-8">
-<title>Sub10: JavaScript Events</title>
+<title>JavaScript Events</title>
 <link type="text/css" rel=stylesheet href="css/cit261.css">
 <style type="text/css">
 
 </style>
+<script>
+window.addEventListener('beforeunload', (event) => {
+	event.returnValue = 'Are you sure you want to leave?';
+});
+</script>
 </head>
 <body>
 <div id="container">
@@ -14,24 +19,34 @@
 	<h1>JavaScript Events</h1>
 	<p>Standard JavaScript Events Including those for Mobile Devices ( Ex. onTouchBegin, onLoad, etc.) and Animation and Transition Events</p>
 
-<!--	<hr>
-	<p><b>Assignment Notes:</b> .</p>
-	<p><b>Application:</b> <a href="name.html" title="name">none</a></p>-->
+	<hr>
+	<p><b>Assignment Notes:</b> I build this assignment to learn the different control events. I used canvas as the medium to tie it all together. It has mouse, keyboard, and touch interaction. My favorite is the multi touch. It turned out pretty good. I tested this app across Android, Windows and i-OS browsers.</p>
+	<p><b>Application:</b> <a href="controls.html" title="name">Controls</a></p>
 	
 	<h3>Events</h3>
 	<p>The <b>onload</b> and <b>onunload</b> events are triggered when the user enters or leaves the page.</p>
+	<p>I couldn't get <b>onunload</b> to work, so I used beforeunload insted.</p>
 	<code>onload
 onunload
+beforeunload
 
 onclick
-onchange
+onchange see sub06-Document-Object-Model.html
 onfocus
 
 onmouseover
 onmouseout
 onmousedown
-onmouseup</code>
+onmouseup
 
+keydown
+keyUpHandler
+
+ontouchstart
+touchmove
+touchend
+touchcancel
+</code>
 
 </div>
 <div id="copyright">Copyright &copy; 2019 Kevin Nielsen - CIT261</div>

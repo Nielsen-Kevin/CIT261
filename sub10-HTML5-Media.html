@@ -2,9 +2,10 @@
 <html>
 <head>
 <meta charset="utf-8">
-<title>Sub09: HTML5 Tags for Media</title>
+<title>HTML5 Tags for Media</title>
 <link type="text/css" rel=stylesheet href="css/cit261.css">
 <style type="text/css">
+	table { font-family: "Courier New", monospace; font-size: 0.8em;  border: 1px solid #cccccc;  border-collapse:collapse;   }
 
 </style>
 </head>
@@ -14,16 +15,356 @@
 	<h1>HTML5 Tags for Media</h1>
 	<p>HTML5 Tags - Video, Audio, and Canvas</p>
 
-<!--
-	<hr>
-	<p><b>Assignment Notes:</b> .</p>
-	<p><b>Application:</b> <a href="name.html" title="name">name</a></p>
-	
-	<h3>SumTopic</h3>
-	<code>
-	</code>
--->
+<!--Video Section------------------------------------------------------------------->
+	<h3>Video</h3>
+	<p>This video is one of my 3D projects I created a while ago. I created it to show how you can use lighting, texture, and transparency to making simple shadows and reflections in Cinema 4D.</p>
+	<p>The  video is converted into three formats to  show  source tag in use.  Giving every brower a compatible video  option.</p>
+	<video id="horseVideo" width="400" height="racehorse" autoplay poster="images/race-horse-by-muybridge.jpg">
+		<source src="video/galloping_horse_x264.mp4" type="video/mp4" />
+		<source src="video/galloping_horse_libtheora.ogv" type="video/ogg" />
+		<source src="video/galloping_horse_VP8.webm" type="video/webm" />
+		Your browser does not support the video tag.
+	</video>
+	<p><button id="videoButton">Play video</button> <i>Button will change when video is playing, pause or has ended.</i></p>
+	<p><button onClick="jumpTo(0);">0</button>
+	<button onClick="jumpTo(1);">1</button>
+	<button onClick="jumpTo(2);">2</button>
+	<button onClick="jumpTo(3);">3</button>
+	<button onClick="jumpTo(4);">4</button>
+	<button onClick="jumpTo(5);">5</button>
+	<button onClick="jumpTo(6);">6</button>
+	<button onClick="jumpTo(7);">7</button>
+	<button onClick="jumpTo(8);">8</button>
+	<button onClick="jumpTo(9);">9</button>
+	 <i>Time Jump, note video is only 9 seconds long.</i></p>
+	 <p><button onclick="openFullscreen();">Open Video in Fullscreen Mode</button> <button onclick="openPictureInPicture(this);">Open Video in PIP Mode</button> <span id="clock"></span></p>
+<script type="text/javascript">
+//Video taggle play
+var video = document.getElementById('horseVideo');
+var videoButton = document.getElementById('videoButton');
+videoButton.addEventListener('click', function (event) {
+	if (videoButton.textContent == 'Pause video') {
+		video.pause();
+	} else {
+		video.play();
+	}
+}, false);
+//Video Events change text when video is playing, pause and ended
+video.onpause = function() {
+	videoButton.textContent = 'Play video';
+};
+video.onended = function() {
+	videoButton.textContent = 'Play video';
+	if( window.innerHeight == screen.height) {
+		document.exitFullscreen();//close when video is over
+	}
+};
+video.onplaying = function() {
+	videoButton.textContent = 'Pause video';
+};
+video.ontimeupdate = function() {
+	document.getElementById('clock').innerHTML = Math.round(video.currentTime) + ' sec';
+};
+//Jump to time
+function jumpTo(time) {
+	video.currentTime = time;
+};
+//Fullscreen
+function openFullscreen() {
+	video.requestFullscreen();
+}
+//PictureInPicture
+function openPictureInPicture(obj) {
+	obj.disabled = true;
+	try {
+		video.requestPictureInPicture();
+	}
+	catch(error) {
+		alert(error);
+	}
+	finally {
+		obj.disabled = false;
+	}
+};
+</script>
 
+<!--Audio Section------------------------------------------------------------------->
+	<h3>Audio</h3>
+	<p>Here I put together an simple playlist, loads into a single audio tag and auto plays next after previous sound ends.</p>
+	<audio controls id="audioPlayer">
+		Your browser does not support the audio element.
+	</audio>
+	<ul id="playlist">
+	</ul>
+	</p>
+<style>
+#playlist {
+    margin: 0.75em 0;
+    padding: 0;
+    list-style: none;	
+}
+#playlist li {
+	padding: 10px;
+}
+#playlist li:nth-child(even) {background: #f2f2f2}
+#playlist li:nth-child(odd) {background: #e6e6e6}
+#playlist .current a {
+	color:red;
+	font-weight:bold;
+}
+#playlist li a {
+	color:black;
+	text-decoration: none;
+}
+#playlist li.current a:before { 
+    content: "";
+    border-color: transparent #111;
+    border-style: solid;
+    border-width: 0.35em 0 0.35em 0.45em;
+    display: inline-block;
+    height: 0;
+    width: 0;
+    left: -1em;
+    position: relative;
+}
+#playlist li.current {
+	text-indent: 1em;
+}
+</style>
+<script type="text/javascript">
+audioPlayer();
+
+function audioPlayer() {
+	var currentSong = 0;
+	var aPlayer = document.querySelector('#audioPlayer');
+	aPlayer.src = document.querySelector('#audioPlayer li a');
+	var list = {
+		0: {'src': 'https://www.w3schools.com/tags/horse.mp3', 'title': 'Horse Sound' },
+		1: {'src': 'audio/Exit%20the%20Premises.mp3', 'title': 'Exit the Premises' },
+		2: {'src': 'audio/Severe%20Tire%20Damage.mp3', 'title': 'Severe Tire Damage' },
+		3: {'src': 'audio/Broken%20Reality.mp3', 'title': 'Broken Reality' }
+	};
+
+	let goWhere = document.getElementById('playlist');
+	
+	for(let i in list) {
+		let liObject = document.createElement('li'); 
+		if(i == 0) {
+			liObject.className = 'current';
+			aPlayer.src = list[i].src;//start
+		}
+		let aObject = document.createElement('a');
+		aObject.onclick = function(e) {
+			e.preventDefault();
+			aPlayer.src = list[i].src;
+			aPlayer.play();
+			currentSong = i;
+			document.querySelector('.current').classList.remove('current');
+			e.target.parentNode.classList.add('current');
+		};
+		aObject.setAttribute('id', 'song_' + i);
+		aObject.setAttribute('href', list[i].src);
+		aObject.innerHTML = list[i].title;
+		liObject.appendChild(aObject);
+		
+		goWhere.appendChild(liObject);
+	}
+
+	aPlayer.onended = function() {
+		currentSong++;
+		document.querySelector('#playlist li.current').classList.remove('current');
+		document.querySelector('#playlist li #song_' + currentSong).parentNode.classList.add('current');
+		aPlayer.src = list[currentSong].src;
+		if(currentSong < Object.keys(list).length) {
+			aPlayer.play();
+		}
+	};
+}
+</script>
+<!--Canvas Section------------------------------------------------------------------->
+<h3>Canvas</h3>
+<p>My first attempt with collision detection on squares and circles. I think I did pretty good.</p>
+<canvas style="border:1px solid #999"></canvas>
+<p><button id="toggleLines">Toggle Detection Lines ON</button></p>
+<script type="text/javascript">
+var canvas = document.querySelector('canvas');
+var ctx = canvas.getContext('2d');
+canvas.width = 400;
+canvas.height = 250;
+
+function Square(width, height, x, y, dx, dy, color) {
+	this.shape = 'square';
+	this.color = color;
+	this.width = width;
+	this.height = height;
+	this.x = x;
+	this.y = y;
+	this.dx = dx;
+	this.dy = dy;
+	this.draw = function() {
+		ctx.fillStyle = this.color;
+		ctx.fillRect(this.x, this.y, this.width, this.height);
+	}
+	this.wall = function() {
+		if(this.x + this.dx > canvas.width - this.width || this.x + this.dx < 0) {
+			this.dx = -this.dx;
+		}
+		if(this.y + this.dy > canvas.height - this.height || this.y + this.dy < 0) {
+			this.dy = -this.dy;
+		}
+	}
+	this.hitTest = function(obj) {
+		// Square hit Circle
+		if(obj.shape == 'circle') {
+			if (obj.x < this.x) {// left edge
+				testX = this.x + obj.radius;	
+			} else if (obj.x > this.x + this.width) {// right edge
+				testX = this.x + this.width;
+			}
+			if (obj.y < this.y ) {// top edge
+				testY = this.y + obj.radius;
+			} else if (obj.y > this.y + this.height) {// bottom edge	
+				testY = this.y + this.height;
+			}
+			distance = getDistance(testX, testY, obj.x, obj.y);
+			if (distance <= obj.radius) {
+				return true;
+			}
+			return false;
+		} else {
+			// Square hit Square
+			if(this.x < obj.x + obj.width && this.x + this.width > obj.x &&	this.y < obj.y + obj.height && this.y + this.height > obj.y) {
+				return true;
+			}
+		}
+		return false;
+	}
+}
+
+function Circle(radius, x, y, dx, dy, color) {
+	this.shape = 'circle';
+	this.color = color;
+	this.radius = radius;
+	this.x = x;
+	this.y = y;
+	this.dx = dx;
+	this.dy = dy;
+	this.draw = function() {
+		ctx.beginPath();
+		ctx.arc(this.x, this.y, this.radius, 0, Math.PI*2);
+		ctx.fillStyle = this.color;
+		ctx.fill();
+		ctx.closePath();
+	}
+	this.wall = function() {
+		if(this.x + this.dx > canvas.width - this.radius || this.x + this.dx < this.radius) {
+			this.dx = -this.dx;
+		}
+		if(this.y + this.dy > canvas.height - this.radius || this.y + this.dy < this.radius) {
+			this.dy = -this.dy;
+		}
+	}
+	this.hitTest = function(obj) {
+		if(detectionLines) {
+			ctx.beginPath();
+			ctx.moveTo(this.x, this.y);
+		}
+
+		//Circle hit Square
+		if(obj.shape == 'square') {
+			var distance = getDistance(this.x, this.y, obj.x + obj.width/2, obj.y + obj.width/2);
+			if(distance <= this.radius + obj.width/2) {
+				return true;
+			}
+			if(detectionLines) { ctx.lineTo(obj.x + obj.width/2, obj.y + obj.width/2); }
+		} else {
+			//Circle hit Circle
+			var distance = getDistance(this.x, this.y, obj.x, obj.y);
+			if(distance <= this.radius + obj.radius) {
+				return true;
+			}
+			if(detectionLines) { ctx.lineTo(obj.x, obj.y); }
+		}
+		if(detectionLines) {
+			ctx.lineTo(this.x, this.y);
+			ctx.strokeStyle = '#ddd';
+			ctx.stroke();
+		}
+		return false;
+	}
+}
+
+function getDistance(x1, y1, x2, y2) {
+	let xDistance = x2 - x1;
+	let yDistance = y2 - y1;
+	// Pythagorean Theorem
+	return Math.sqrt(Math.pow(xDistance, 2) + Math.pow(yDistance, 2));
+}
+
+var box = new Square(20,20,10,10,1,2,'green');
+var box2 = new Square(30,30,200,10,3,2,'red');
+var ball = new Circle(20,150,100,2,-2,'blue');
+var ball2 = new Circle(15,200,75,-2,3,'yellow');
+
+window.addEventListener('load', function () {
+
+	var instances = [box,box2,ball,ball2];
+
+	function AnimationLoop() {
+		ctx.clearRect(0, 0, canvas.width, canvas.height);
+		for (let i = 0; i < instances.length; i++) {
+			// Handle obj collisions
+			for (let j = 0; j < instances.length; j++) {
+				var obj1 = instances[i];
+				var obj2 = instances[j];
+				if(j != i){
+					if(obj1.hitTest(obj2)) {
+						// Swap dx if moving towards each other
+						if ((obj1.x > obj2.x) == (obj1.dx < obj2.dx)) {
+							var swap = obj1.dx;
+							obj1.dx = obj2.dx;
+							obj2.dx = swap;
+						}
+						// Swap dy if moving towards each other
+						if ((obj1.y > obj2.y) == (obj1.dy < obj2.dy)) {
+							var swap = obj1.dy;
+							obj1.dy = obj2.dy;
+							obj2.dy = swap;
+						}
+					}
+				}	
+			}
+			instances[i].x += instances[i].dx;
+			instances[i].y += instances[i].dy;
+			instances[i].wall();
+			instances[i].draw();
+		}
+		window.requestAnimationFrame(AnimationLoop);
+	};
+	AnimationLoop();//start
+});
+
+var detectionLines = false;
+
+document.querySelector('#toggleLines').addEventListener('click', function (event) {
+	if (this.textContent != 'Toggle Detection Lines ON') {
+		this.textContent = 'Toggle Detection Lines ON';
+		detectionLines = false;
+	} else {
+		this.textContent = 'Toggle Detection Lines OFF';
+		detectionLines = true;
+	}
+
+}, false);
+</script>
+<!--End------------------------------------------------------------------->
+	<h3>Notes</h3>
+	<p>For a full DOM reference, go to our <a href="https://www.w3schools.com/tags/ref_av_dom.asp" target="_blank">HTML5 Audio/Video DOM Reference</a>.</p>
+	<p><input type="text" style="width:600px;" value="https://www.tutorialspoint.com/html5/html5_audio_video.htm"/></p>
+	<p><input type="text" style="width:600px;" value="https://www.w3schools.com/html/html5_video.asp"/></p>
+	<p><input type="text" style="width:600px;" value="https://www.w3schools.com/html/html5_audio.asp"/></p>
+	<p><input type="text" style="width:600px;" value="https://www.w3schools.com/tags/ref_canvas.asp"/></p>
+	<p><input type="text" style="width:600px;" value="https://developer.mozilla.org/en-US/docs/Games/Tutorials/2D_Breakout_game_pure_JavaScript/Bounce_off_the_walls"/></p>
 </div>
 <div id="copyright">Copyright &copy; 2019 Kevin Nielsen - CIT261</div>
 </body>

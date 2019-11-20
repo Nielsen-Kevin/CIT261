@@ -2,7 +2,7 @@
 <html>
 <head>
 <meta charset="utf-8">
-<title>Sub13: CSS Animations</title>
+<title>CSS Animations</title>
 <link type="text/css" rel=stylesheet href="css/cit261.css">
 <style type="text/css">
 </style>
@@ -12,83 +12,112 @@
 	<nav><a href="index.html">Home</a></nav>
 	<h1>CSS Animations</h1>
 	<p>Designing, Defining and Triggering CSS3 Animations without Custom Libraries</p>
-
-<!--
-	<hr>
-	<p><b>Assignment Notes:</b> .</p>
-	<p><b>Application:</b> <a href="name.html" title="name">name</a></p>
-	
-	<h3>SumTopic</h3>
-	<code>
-	</code>
--->
-
-<p><img src="images/race-horse-by-muybridge.jpg" width="800" height="587"><br>
-	<i>Famous photographic work, pioneering the study of motion.  Race horse galloping by Eadweard Muybridge.</i></p>
-<style>
-	#animation {
-		width: 200px;
-		height: 146px;
-		background-image: url("images/race-horse-by-muybridge.jpg");
-		animation: playX-axis .25s steps(4) infinite,
-				   playY-axis 1s steps(4) infinite;
-	}
-	@keyframes playX-axis {
-		from {background-position-x: 0px;}
-		to {background-position-x: -800px;}
-	}
-	@keyframes playY-axis {
-		from {background-position-y: 0px;}
-		to {background-position-y: -587px;}
-	}
-</style>
-<div id="animation"></div>
-	<code>#animation {
-	width: 200px; <span class="comment">/*divide width by frames */</span>
-	height: 146px; <span class="comment">/*divide height by stacks */</span>
-	background-image: url("images/race-horse-by-muybridge.jpg");
-	animation: playX-axis .25s steps(4) infinite, <span class="comment">/* set number of frames across */</span>
-			   playY-axis 1s steps(4) infinite; <span class="comment">/* set number of rows stacked */</span>
-}
-@keyframes playX-axis {
-	from {background-position-x: 0px;}
-	to {background-position-x: -800px;} <span class="comment">/* width of image */</span>
-}
-@keyframes playY-axis {
-	from {background-position-y: 0px;}
-	to {background-position-y: -587px;} <span class="comment">/* height of image */</span>
-}</code>
-<p><img src="images/race-horse-filmstrip-muybridge.jpg" width="2195" height="109">
 <br>
-Image by Eadweard Muybridge</p>
-
-<style>
-	#animation2 {
-		width: 138px;
-		height: 109px;
-		background-image : url("images/race-horse-filmstrip-muybridge.jpg");
-		animation: moveX-axis 1s steps(16) infinite;
-	}
-	@keyframes moveX-axis {
-		from {background-position-x:0px;}
-		to {background-position-x:-2195px;}/*width of images*/
-	}
-</style>
-<div id="animation2"></div>
-<code>#animation2 {
-	width: 138px;
-	height: 109px;
-	background-image : url("images/race-horse-filmstrip-muybridge.jpg");
-	animation: moveX-axis 1s steps(16) infinite;
+<div id="banner-container">
+	<div id="banner-star"></div>
+	<div id="banner-color"></div>
+	<div id="banner-line-art"></div>
+</div>
+<style type="text/css">
+#banner-container {
+	position:relative;
+	border:1px solid #333;
 }
-@keyframes moveX-axis {
-	from {background-position-x:0px;}
-	to {background-position-x:-2195px;} <span class="comment">/* width of image */</span>
-}</code>
+#banner-container, #banner-line-art, #banner-color  {
+	width: 804px;
+	height: 256px;
+}
+#banner-line-art {
+	background: url(images/kitchen-line-art.png) center center no-repeat;
+	position: absolute;
+	z-index: 1;
+}
+#banner-color {
+	background: url(images/kitchen-color.png) center center no-repeat;
+	clip-path: circle(423px at 402px 125px);
+	position: absolute;
+	z-index: 2;
+	animation: bannerK 12s linear 0s infinite normal both running;
+}
+@keyframes bannerK {
+	0% {
+		clip-path: circle(1px at -1px -1px);
+	}
+	10% {
+		clip-path: circle(101.5px at -113.5px -17.5px);
+	}
+	20% {
+		clip-path: circle(96.5px at 401.5px 248.5px);
+	}
+	30% {
+		clip-path: circle(129px at 799px -63px);
+	}
+	40% {
+		clip-path: circle(117px at 381px 47px);
+	}
+	50% {
+		clip-path: circle(138.5px at 27.5px 117.5px);
+	}
+	60% {
+		clip-path: circle(123px at 634px 258px);
+	}
+	70% {
+		clip-path: circle(13px at 366px 202px);
+	}
+	75%, 95%  {
+		clip-path: circle(423px at 402px 125px);/*hold display longer*/
+	}
+	100% {
+		clip-path: circle(1px at 402px 125px);
+	}
+}
+#banner-star {
+	width: 100px;
+	height: 100px;
+	top: 124px;
+	left: 366px;
+	background: url(images/star.svg) center center no-repeat;
+	background-color:transparent;
+	position: absolute;
+	z-index: 3;
+	animation: starK 12s linear 0s infinite normal both running;
+}
+@keyframes starK {
+	0%, 100% {
+		transform: scale(0.0) rotate(0deg);/*hide it*/
+	}
+	72% {
+		transform: scale(0.1) rotate(0deg);
+	}
+	74% {
+		transform: scale(1.5) rotate(10deg);
+	}
+	80% {
+		transform: scale(0.1) rotate(0deg);
+	}
+}
+</style>
 
+<p style="text-align:right;"><i>Art by Ah-young</i></p>
 
-<h3>Sources</h3>
-	<p><input type="text" style="width:600px;" value="https://itnext.io/creating-css-animations-using-sprite-sheet-47e2b7a3793c"/></p>
+<button>Stop All Animation!</button> <i>For testing purposes, yes there are two animations it this banner.</i>
+<script type="text/javascript">
+document.querySelector('button').addEventListener('click', function (event) {
+	if (this.textContent != 'Start All Animation!') {
+		this.textContent = 'Start All Animation!';
+		document.getElementById('banner-color').style.animationPlayState = 'paused';
+		document.getElementById('banner-star').style.animationPlayState = 'paused';
+	} else {
+		this.textContent = 'Stop All Animation!';
+		document.getElementById('banner-color').style.animationPlayState = 'running';
+		document.getElementById('banner-star').style.animationPlayState = 'running';
+	}
+
+}, false);
+</script>
+
+	<h3>Notes</h3>
+	<p><a href="CSS-Animations-Notes.html">CSS-Animations notes and examples</a></p>
 </div>
 <div id="copyright">Copyright &copy; 2019 Kevin Nielsen - CIT261</div>
 </body>

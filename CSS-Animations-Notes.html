@@ -1,0 +1,186 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Notes CSS Animations</title>
+<link type="text/css" rel=stylesheet href="css/cit261.css">
+<style type="text/css">
+</style>
+</head>
+<body>
+<div id="container">
+	<nav><a href="index.html">Home</a></nav>
+	<h1>CSS Animations</h1>
+	<p>Designing, Defining and Triggering CSS3 Animations without Custom Libraries</p>
+
+<h2>The Two Main Parts of Animations</h2>
+<ol>
+	<li><b>Keyframes</b> - define the stages and styles of the animation. </li>
+	<li><b>Animation Properties</b> - assign the @keyframes to a specific CSS element and define how it is animated.<br>
+	</li>
+</ol>
+<h2>Keyframes</h2>
+<p><b>Name of the animation:</b> A name that describes the animation</p>
+<p><b>Stages of the animation:</b> Each stage of the animation is represented as a percentage. 0% represents the beginning state of the animation. 100% represents the ending state of the animation. Multiple intermediate states can be added in between.</p>
+<p><b>CSS Properties:</b> The CSS properties defined for each stage of the animation timeline.</p>
+<p>From and To Stage</p>
+<code>@keyframes <b>[name]</b> {
+	from {
+		<span class="comment">[style]</span>
+	}
+	to {
+		<span class="comment">[style]</span>
+	}
+ }</code>
+<p>Percentage Stage</p>
+<code>@keyframes <b>[name]</b> {
+	0% {
+		<span class="comment">[style]</span>
+	}
+	50% {
+		<span class="comment">[style]</span>
+	}
+	100% {
+		<span class="comment">[style]</span>
+	}
+ }</code>
+
+<h2>Animation Properties</h2>
+<code>.element_name {
+
+		<b>animation-name</b>: [name]
+		
+		<b>animation-duration</b>:
+			how long an animation should take to complete one cycle
+		
+		<b>animation-timing-function</b>: [ease, linear, ease-in, ease-out, ease-in-out]
+			Speed Curve
+			Set your ounr [cubic-bezier(n,n,n,n)]
+		
+		<b>animation-delay</b>: [delay for the start]
+				
+				
+		<b>animation-iteration-count</b>: [Xs, Xms, infinite]
+			How Many Times an Animation Should Run
+				
+		
+		<b>animation-direction</b>: [normal, reverse, alternate, alternate-reverse];
+				
+		
+		<b>animation-fill-mode</b>: [none, forwards, backwards, both ];
+			When the animation is not playing
+				
+		
+		<b>animation-play-state</b>: [running or paused];
+
+								
+		<span class="comment">/* short hand - with set order */</span>
+		<b>animation</b>:	[name] [duration] [timing-function] [delay]
+					[iteration-count] [direction] [fill-mode] [play-state];
+}</code>
+
+
+
+<p></p>
+
+
+<h2>Examples</h2>
+
+<p><img src="images/race-horse-by-muybridge.jpg" width="800" height="587"><br>
+	<i>Famous photographic work, pioneering the study of motion.  Race horse galloping by Eadweard Muybridge.</i></p>
+<style>
+	#animation {
+		width: 200px;
+		height: 146px;
+		background-image: url("images/race-horse-by-muybridge.jpg");
+		animation: playX-axis .25s steps(4) infinite,
+				   playY-axis 1s steps(4) infinite;
+	}
+	@keyframes playX-axis {
+		from {background-position-x: 0px;}
+		to {background-position-x: -800px;}
+	}
+	@keyframes playY-axis {
+		from {background-position-y: 0px;}
+		to {background-position-y: -587px;}
+	}
+</style>
+<p>
+	<div id="animation"></div>
+</p>
+	<code>#animation {
+	width: 200px; <span class="comment">/*divide width by frames */</span>
+	height: 146px; <span class="comment">/*divide height by stacks */</span>
+	background-image: url("images/race-horse-by-muybridge.jpg");
+	animation: playX-axis .25s steps(4) infinite, <span class="comment">/* set number of frames across */</span>
+			   playY-axis 1s steps(4) infinite; <span class="comment">/* set number of rows stacked */</span>
+}
+@keyframes playX-axis {
+	from {background-position-x: 0px;}
+	to {background-position-x: -800px;} <span class="comment">/* width of image */</span>
+}
+@keyframes playY-axis {
+	from {background-position-y: 0px;}
+	to {background-position-y: -587px;} <span class="comment">/* height of image */</span>
+}</code>
+<p style="overflow-x: scroll;"><img src="images/race-horse-filmstrip-muybridge.jpg" width="2195" height="109">
+</p><p>Muybridge's image made into a filmstrip</p>
+
+<style>
+	#animation2 {
+		width: 138px;
+		height: 109px;
+		background-image : url("images/race-horse-filmstrip-muybridge.jpg");
+		animation: moveX-axis 1s steps(16) infinite;
+	}
+	@keyframes moveX-axis {
+		from {background-position-x:0px;}
+		to {background-position-x:-2195px;}/*width of images*/
+	}
+</style>
+<p>
+	<div id="animation2"></div>
+	<button>Stop Animation!</button>
+</p>
+<p>
+	<script>
+	var toggler = document.querySelector('button');
+	
+	toggler.addEventListener('click', function (event) {
+		if (toggler.textContent != 'Start Animation!') {
+			toggler.textContent = 'Start Animation!';
+			document.getElementById('animation2').style.animationPlayState = 'paused';
+		} else {
+			toggler.textContent = 'Stop Animation!';
+			document.getElementById('animation2').style.animationPlayState = 'running';
+		}
+	}, false);
+	</script>
+	<code>#animation2 {
+	width: 138px;
+	height: 109px;
+	background-image : url("images/race-horse-filmstrip-muybridge.jpg");
+	animation: moveX-axis 1s steps(16) infinite;
+	}
+	@keyframes moveX-axis {
+	from {background-position-x:0px;}
+	to {background-position-x:-2195px;} <span class="comment">/* width of image */</span>
+}</code></p>
+	<p><code>var toggler = document.querySelector('button');
+toggler.addEventListener('click', function (event) {
+	if (toggler.textContent != 'Start Animation!') {
+		toggler.textContent = 'Start Animation!';
+		document.getElementById('animation2').style.animationPlayState = 'paused';
+	} else {
+		toggler.textContent = 'Stop Animation!';
+		document.getElementById('animation2').style.animationPlayState = 'running';
+	}
+}, false)</code></p>
+<h3>Sources</h3>
+	<p><input type="text" style="width:600px;" value="https://thoughtbot.com/blog/css-animation-for-beginners"/></p>
+	<p><input type="text" style="width:600px;" value="https://www.w3schools.com/css/css3_animations.asp"/></p>
+</div>
+
+<div id="copyright">Copyright &copy; 2019 Kevin Nielsen - CIT261</div>
+</body>
+</html>

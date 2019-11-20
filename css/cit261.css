@@ -20,18 +20,29 @@ hr {
     border: none;
 }
 code {
-	font-family: monospace;
-	color: #900;
-	font-size: 14px;
 	margin: 0;
 	padding: 5px;
+	height: auto;
+	display:block;
 	border: 1px solid #000;
 	background:#ededed;
-	display:block;
 	white-space: pre;
 	overflow: auto;
 	overflow-y: hidden;
 	tab-size: 4;
+	font-family: monospace;
+	color: #900;
+	font-size: 14px;
+
+}
+.hideCode {
+	height: 20px;
+	color: #ededed;
+	background-image:url('../images/doubleclick.svg');
+	background-position:right 5px top 5px;
+	background-size: 20px 20px;
+	background-repeat:no-repeat;
+	user-select: none;
 }
 code b {
 	font-family: monospace;

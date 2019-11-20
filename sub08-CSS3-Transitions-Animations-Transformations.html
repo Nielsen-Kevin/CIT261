@@ -2,30 +2,296 @@
 <html>
 <head>
 <meta charset="utf-8">
-<title>Sub08: CSS3 Transitions, Animations, Transformations</title>
+<title>CSS3 Transitions, Animations, Transformations</title>
 <link type="text/css" rel=stylesheet href="css/cit261.css">
-<style type="text/css">
-
-</style>
+<style type="text/css"></style>
 </head>
 <body>
 <div id="container">
 	<nav><a href="index.html">Home</a></nav>
 	<h1>CSS3 Transitions, Animations, Transformations</h1>
 	<p>Creating CSS3 Transitions and Animations in CSS and triggering them with JavaScript</p>
+<!--Horse Race Start--------------------------------------------------------------------------->
+	<h3>Horse Race</h3>
+	<p>Each race is different by randomly distributing timing-functions to each horse.</p>
+	<style>
+	#track {
+		width: 700px;
+		background-color:#ececec; background-image: linear-gradient(#fcfcfc, #e1e1e1);;
+		transform: skew(-20deg);
+		margin:50px 0 0 50px;
+		border-top:1px dashed #333333;
+	}
+	.lane {
+		border-bottom:1px dashed #333333;
+		position: relative;
+		height: 50px;
+		margin-top: -60px;
+		padding-bottom: 60px;
+	}
+	.one {transform: scale(1,0.8); height: 37.5px; }
+	.two {transform: scale(1,0.8); height: 40px;}
+	.three {transform: scale(1,0.85); height: 42.5px;}
+	.four {transform: scale(1,0.9); height: 45px;}
+	.five {}
 
+	.giddyUp {
+		width: 137px;
+		height: 100px;
+		position: relative;
+		animation: runHorse 1s steps(16) infinite;
+		background-image : url("images/race-horse-muybridge-alpha.png");
+		animation-play-state:inherit;
+		margin-left:auto;
+	}
+	#BlackHorse, #BlueHorse, #GreenHorse, #YellowHorse, #RedHorse {
+		width: 138px;
+		height: 100px;
+		position: relative;
+		animation-play-state:paused;
+	}
 
-<!--
-	<hr>
-	<p><b>Assignment Notes:</b> .</p>
-	<p><b>Application:</b> <a href="name.html" title="name">name</a></p>
+	#BlackHorse {transform: scale(.8,.8); filter: invert(30%) grayscale(100%) brightness(70%) contrast(4);}
+	#BlueHorse {transform: scale(.85,.85); filter: grayscale(100%) brightness(30%) sepia(100%) hue-rotate(-180deg) saturate(700%) contrast(0.8);}
+	#GreenHorse {transform: scale(.9,.9); filter: grayscale(100%) brightness(40%) sepia(100%) hue-rotate(50deg) saturate(1000%) contrast(0.8);}
+	#YellowHorse {transform: scale(.95,.95); filter: grayscale(100%) brightness(120%) sepia(90%) hue-rotate(5deg) saturate(500%) contrast(0.7);}
+	#RedHorse {transform: scale(1,1); filter: grayscale(100%) brightness(40%) sepia(100%) hue-rotate(-50deg) saturate(600%) contrast(0.8);}
+
+	@keyframes runHorse {
+		from {background-position-x:0px;}
+		to {background-position-x:-2222px;}/*width of images*/
+	}
+
+	@keyframes race {
+		from {left: 0;}
+		to {left: 700px;}
+	}
+	</style>
+	<div id="track">
+		<div class="lane one">
+			<div id="BlackHorse" class="horse">
+				<div class="giddyUp"></div>
+			</div>
+		</div>
+		<div class="lane two">
+			<div id="BlueHorse" class="horse">
+				<div class="giddyUp"></div>
+			</div>
+		</div>
+		<div class="lane three">
+			<div id="GreenHorse" class="horse">
+				<div class="giddyUp"></div>
+			</div>
+		</div>
+		<div class="lane four">
+			<div id="YellowHorse" class="horse">
+				<div class="giddyUp"></div>
+			</div>
+		</div>
+		<div class="lane five">
+			<div id="RedHorse" class="horse">
+				<div class="giddyUp"></div>
+			</div>
+		</div>
+	</div>
+	<p><button>Start Race!</button> <span id="time"></span> <div id='result'></div></p>
+<script type="text/javascript"> 
+var raceStarted = false;
+var racePaused = false;
+var stopWatch;
+var clock = 0;
+var toggler = document.querySelector('button');
+var horseList = document.getElementsByClassName('horse');
+var time = document.getElementById('time');
+var record = [];
+
+var horse1 = document.getElementById('BlackHorse'),
+	horse2 = document.getElementById('BlueHorse'),
+	horse3 = document.getElementById('GreenHorse'),
+	horse4 = document.getElementById('YellowHorse'),
+	horse5 = document.getElementById('RedHorse');
+
+	horse1.addEventListener('animationend', endRace);
+	horse2.addEventListener('animationend', endRace);
+	horse3.addEventListener('animationend', endRace);
+	horse4.addEventListener('animationend', endRace);
+	horse5.addEventListener('animationend', endRace);
+
+toggler.addEventListener('click', function (event) {
+	startRace();
+	if (toggler.textContent != 'Start Race!') {
+		toggler.textContent = 'Start Race!';
+		horse1.style.animationPlayState = 'paused';
+		horse2.style.animationPlayState = 'paused';
+		horse3.style.animationPlayState = 'paused';
+		horse4.style.animationPlayState = 'paused';
+		horse5.style.animationPlayState = 'paused';
+		racePaused = true;
+	} else {
+		toggler.textContent = 'Stop Race!';
+		horse1.style.animationPlayState = 'running';
+		horse2.style.animationPlayState = 'running';
+		horse3.style.animationPlayState = 'running';
+		horse4.style.animationPlayState = 'running';
+		horse5.style.animationPlayState = 'running';
+		racePaused = false;
+	}
+});
+
+function endRace(e) {
+	e.target.style.animation  = '';
+	toggler.textContent = 'Start Race!';
+	record = [];
+	stopClock();
+	if(raceStarted) {
+		raceStarted = false;
+		document.getElementById('result').innerHTML += '---end---<br>';
+	}
+}
+
+function startRace() {
+	var ways = ['linear','ease','ease-in','ease-out','ease-in-out'];
+	if(!raceStarted) {
+		let copy = ways;
+		//Random Pick
+		for(let i = 0; i < horseList.length; i++) {
+			copy.sort(function(a, b){return 0.5 - Math.random()});
+			pick = copy.pop();
+			horseList[i].style.animation  = 'race 15s 1';
+			horseList[i].style.animationTimingFunction = pick;
+			horseList[i].style.animationPlayState = 'running';
+		}
+		raceStarted = true;
+		stopWatch = setInterval(timer, 100);
+	}
+}
+function timer() {
+	if(!racePaused) {
+		for(let i = 0; i < horseList.length; i++) {
+			if(horseList[i].offsetLeft >= 565) {
+				if(record[i] == undefined) {
+					record[i] = [horseList[i].id, clock];
+					document.getElementById('result').innerHTML += horseList[i].id + ' - time: ' + clock/10 + 's - ' + horseList[i].style.animationTimingFunction + '<br>';
+				}
+			}
+		}
+		clock++;
+		time.innerHTML = clock/10 + 's';
+	}
+}
+
+function stopClock() {
+	clearInterval(stopWatch);
+	clock = 0;
+}
+</script>
+<!--Tilt Gallery Start--------------------------------------------------------------------------->
+	<h3>Tilt Gallery</h3>
+	<p>I saw this on steam and thought how can I do this. I think it came out quit nice.</p>
+	<style>
+.box {
+	position: relative;
+	width: 175px;
+	height: 263px;
+	margin: 5px;
+	display:inline-block;
 	
-	<h3>SumTopic</h3>
-	<code>
-	</code>
--->
+}
+.box-contents {
+	position: absolute;
+	top: 0;
+	right: 0;
+	bottom: 0;
+	left: 0;
+	background-color:#09F;
+	transition: transform linear 200ms;
+	transform:scale(1,1);
+}
+.box-contents:hover {
+	z-index:20;
+}
+.temple {
+	background: url(images/photo-temple.jpg) 50% 50% / cover no-repeat;
+}
+.digram {
+	background: url(images/photo-digram.jpg) 50% 50% / cover no-repeat;
+}
+.christus {
+	background: url(images/photo-christus.jpg) 50% 50% / cover no-repeat;
+}
+.dog {
+	background: url(images/photo-black-dog.jpg) 50% 50% / cover no-repeat;
+}
+.box-contents p {
+	text-align:center;
+	align-items: center;
+	color:#FFF;
+	position: absolute;
+	top: 50%;
+}
+</style>
+	<div class="box">
+		<div class="box-contents temple"></div>
+	</div>
+	<div class="box">
+		<div class="box-contents dog"></div>
+	</div>
+	<div class="box">
+		<div class="box-contents digram"></div>
+	</div>
+	<div class="box">
+		<div class="box-contents christus"></div>
+	</div>
+	<p id="info"></p>
+	<script type="text/javascript"> 
+var boxs = document.getElementsByClassName('box');
 
+Array.from(boxs).forEach((box) => {
+	box.addEventListener('mousemove', mouseMoveHandler);
+	box.addEventListener('mouseout', mouseOutHandler);
+});
 
+var perspective = 250;
+function mouseMoveHandler(event){
+	let x, y, hSide, vSide;
+
+	x = event.offsetX;
+	y = event.offsetY;
+	
+	let width = event.target.offsetWidth;
+	let height = event.target.offsetHeight;
+	let halfX = width/2;
+	let halfY = height/2;
+	
+	let newX = x - halfX;
+	let newY = y - halfY;
+	
+	let rotateY = newX * 20 / width;
+	let rotateX = newY * -20 / height;
+	
+	if(x < width-width/3 && x > width/3) {
+		hSide = 'center';
+	} else if(x < halfX) {
+		hSide = 'left';
+	} else if (x > halfX) {
+		hSide = 'right';
+	}
+	if(y < height-height/3 && y > height/3) {
+		vSide = 'center';
+	} else if(y < halfY) {
+		vSide = 'top';
+	} else if (y > halfY) {
+		vSide = 'bottom';
+	}
+	document.getElementById('info').innerHTML = 'X: ' + newX + ', ' + 'Y: ' + newY + ' ' + vSide + ' ' + hSide;
+	
+	event.target.style.transform = 'perspective(' + perspective + 'px)' + 'rotateX(' + rotateX + 'deg)' + 'rotateY(' + rotateY + 'deg)' + 'scale(1.2,1.2)';
+}
+function mouseOutHandler(event){
+	event.target.style.transform = 'perspective(' + perspective + 'px)' + 'rotateX(0deg)' + 'rotateY(0deg)' + 'scale(1,1)';
+}
+</script>
+<!--End--------------------------------------------------------------------------->
 </div>
 <div id="copyright">Copyright &copy; 2019 Kevin Nielsen - CIT261</div>
 </body>
