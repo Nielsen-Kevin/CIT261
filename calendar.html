@@ -7,14 +7,14 @@
 <link type="text/css" rel=stylesheet href="css/cit261.css">
 <link type="text/css" rel=stylesheet href="css/calendar.css">
 </head>
-<body onLoad="startCalendar(); return true;">
+<body onLoad="startCalendar();">
 
 <div id="container">
 	<div id="calendar"></div>
 	<div id="info"></div>
 </div>
-
 <script type="text/javascript">
+
 /* Todo List
 	+ Save data automatically when updated or added - saveEventsToLocalStorage() problem is events saved to others months with overwrite localStorage of that month
 		- possible Fix: check corrent month with month to save to, if different load localStorage for month to save to then save all
@@ -74,6 +74,11 @@ function startCalendar() {
 					thisDay.classList.add('today');
 					this.today = true;
 				}
+				
+				//Add fade
+				thisDay.classList.add('fadeIn');
+				thisDay.setAttribute('style', 'animation-delay: ' + this.day * 100 + 'ms;');
+
 				// Create on click
 				thisDay.onclick = function() {
 					calendar[this.id].button();
@@ -165,19 +170,31 @@ function startCalendar() {
 		html += '</div>';
 
 		modal.innerHTML = html;
-		document.body.appendChild(modal);
+		document.getElementById('calendar').appendChild(modal);
 
 		// click on x close the modal
 		document.getElementsByClassName('close')[0].onclick = function() {
-			modal.style.display = 'none';
-			modal.remove();
+			modal.end();
 		}
 		// click anywhere outside of the modal close it
 		window.onclick = function(event) {
 			if (event.target == modal) {
+				modal.end();
+			}
+		}
+
+		//Start fade-in grow
+		modal.classList.add('fadeGrow');
+		setTimeout(function(){
+			modal.classList.remove('fadeGrow');
+		}, 1);
+
+		modal.end = function() {
+			modal.classList.add('fadeGrow');				
+			setTimeout(function(){
 				modal.style.display = 'none';
 				modal.remove();
-			}
+			}, 500);
 		}
 	}
 
@@ -197,11 +214,12 @@ function startCalendar() {
 			//Save data
 			UpdateEvent(id, nEvent, nDate[1], nDate[2], nDate[0]);
 			mSchedule[id].updateDay();
-			modal.remove();
+			modal.end();
 		};
 	}
 
 	function addEvent(date) {
+		mid = date.replace(/-/g,'_');
 		// Display Form
 		createModal();
 		// Update Field
@@ -214,7 +232,7 @@ function startCalendar() {
 			// Save data
 			let key = NewEvent(nEvent, nDate[1], nDate[2], nDate[0]);
 			mSchedule[key].updateDay();
-			modal.remove();
+			modal.end();
 		}
 	}
 
@@ -226,19 +244,33 @@ function startCalendar() {
 	monthHeading.innerHTML = '<h2>' + txtMonth + ' ' + numYear + '</h2>';
 	mContainer.appendChild(monthHeading);
 
-	// Allow for Link for forward and backwards on Months
+	// Add buttons for previous and next months
 	function prev() {
 		let setPrev = new Date(numYear, numMonthKey - 1, 1);
 		window.location.hash = setPrev.getFullYear() + '_' + (setPrev.getMonth() + 1);
-		mContainer.innerHTML = '';
-		startCalendar();
+
+		// Move calendar grid to left
+		document.querySelector('.grid').classList.add('moveLeft');
+
+		// Give time for the transitions and animations to run
+		setTimeout(function(){
+			mContainer.innerHTML = '';
+			startCalendar();
+		}, 500);
 	}
 
 	function next() {
 		let setNext = new Date(numYear, numMonthKey + 1, 1);
 		window.location.hash = setNext.getFullYear() + '_' + (setNext.getMonth() + 1);
-		mContainer.innerHTML = '';
-		startCalendar();
+		
+		// Move calendar grid to right
+		document.querySelector('.grid').classList.add('moveRight');
+
+		// Give time for the transitions and animations to run
+		setTimeout(function(){
+			mContainer.innerHTML = '';
+			startCalendar();
+		}, 500);
 	}
 
 	// Create Prev Button
